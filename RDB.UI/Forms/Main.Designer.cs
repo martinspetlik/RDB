@@ -1,4 +1,4 @@
-﻿namespace RDB.UI
+﻿namespace RDB.UI.Forms
 {
     partial class Main
     {

@@ -39,8 +39,14 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.all_tables_ch = new System.Windows.Forms.CheckBox();
+            this.od_car_rad = new System.Windows.Forms.RadioButton();
+            this.od_str_rad = new System.Windows.Forms.RadioButton();
+            this.od_tab_rad = new System.Windows.Forms.RadioButton();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
             this.tabs.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabs
@@ -55,6 +61,8 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.label2);
+            this.tabPage1.Controls.Add(this.panel1);
             this.tabPage1.Controls.Add(this.all_tables_ch);
             this.tabPage1.Controls.Add(this.label1);
             this.tabPage1.Controls.Add(this.tables_cb);
@@ -153,6 +161,57 @@
             this.all_tables_ch.UseVisualStyleBackColor = true;
             this.all_tables_ch.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
+            // od_car_rad
+            // 
+            this.od_car_rad.AutoSize = true;
+            this.od_car_rad.Location = new System.Drawing.Point(3, 3);
+            this.od_car_rad.Name = "od_car_rad";
+            this.od_car_rad.Size = new System.Drawing.Size(53, 17);
+            this.od_car_rad.TabIndex = 25;
+            this.od_car_rad.Text = "Čárka";
+            this.od_car_rad.UseVisualStyleBackColor = true;
+            // 
+            // od_str_rad
+            // 
+            this.od_str_rad.AutoSize = true;
+            this.od_str_rad.Checked = true;
+            this.od_str_rad.Location = new System.Drawing.Point(3, 26);
+            this.od_str_rad.Name = "od_str_rad";
+            this.od_str_rad.Size = new System.Drawing.Size(67, 17);
+            this.od_str_rad.TabIndex = 26;
+            this.od_str_rad.TabStop = true;
+            this.od_str_rad.Text = "Středník";
+            this.od_str_rad.UseVisualStyleBackColor = true;
+            // 
+            // od_tab_rad
+            // 
+            this.od_tab_rad.AutoSize = true;
+            this.od_tab_rad.Location = new System.Drawing.Point(3, 49);
+            this.od_tab_rad.Name = "od_tab_rad";
+            this.od_tab_rad.Size = new System.Drawing.Size(70, 17);
+            this.od_tab_rad.TabIndex = 27;
+            this.od_tab_rad.Text = "Tabulátor";
+            this.od_tab_rad.UseVisualStyleBackColor = true;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.od_car_rad);
+            this.panel1.Controls.Add(this.od_tab_rad);
+            this.panel1.Controls.Add(this.od_str_rad);
+            this.panel1.Location = new System.Drawing.Point(14, 134);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(130, 72);
+            this.panel1.TabIndex = 28;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(14, 118);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(102, 13);
+            this.label2.TabIndex = 29;
+            this.label2.Text = "Oddělovač sloupců:";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -167,6 +226,8 @@
             this.tabs.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -184,6 +245,11 @@
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.CheckBox all_tables_ch;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.RadioButton od_car_rad;
+        private System.Windows.Forms.RadioButton od_tab_rad;
+        private System.Windows.Forms.RadioButton od_str_rad;
     }
 }
 

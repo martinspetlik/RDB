@@ -52,6 +52,7 @@ namespace RDB.UI.Forms
         }
 
         private bool all_tables = false;
+        private char oddelovac = ';';
         string filePath = "";
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)   //Vyběr jedné tabulky nebo v souboru jsou všechny
@@ -79,7 +80,12 @@ namespace RDB.UI.Forms
                 openFileDialog.Filter = "Textové soubory (*.txt)|*.txt|csv soubory (*.csv)|*.csv|xsl soubory (*.xsl)|*.xsl|Všechny soubory (*.*)|*.*";
                 openFileDialog.FilterIndex = 2;
                 openFileDialog.RestoreDirectory = true;
-
+                if (od_car_rad.Checked)
+                    oddelovac = ',';
+                else if (od_str_rad.Checked)
+                    oddelovac = ';';
+                else if (od_tab_rad.Checked)
+                    oddelovac = '\t';
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     //Get the path of specified file
@@ -103,7 +109,7 @@ namespace RDB.UI.Forms
                                     var line = reader.ReadLine();
                                     if (line != null)
                                     {
-                                        string[] values = line.Split(';');
+                                        string[] values = line.Split(oddelovac);
                                         string[] arr = new string[values.Length];
                                         //var items = preview.Items;
                                         //ListViewItem lvi1 = new ListViewItem();
@@ -154,7 +160,7 @@ namespace RDB.UI.Forms
                         sloupce_list.Add(column);
                     }
 
-                    InsertColumns();    //volání vkládání
+                    InsertColumns(sloupce_list);    //volání vkládání
                     defaultContext.Database.Connection.Close();
                 }
                 catch (SqlException exp)
@@ -163,33 +169,77 @@ namespace RDB.UI.Forms
                 }
             }
         }
-        private void InsertColumns() //vložení hodnot ze souboru
+        private void InsertColumns(List<string> sloupce_list) //vložení hodnot ze souboru
+        {
+            System.IO.StreamReader file =
+            new System.IO.StreamReader(@filePath, Encoding.Default);
+            
+            if (!all_tables)
+            {
+                string tabulka = tables_cb.Text;
+                InsertIntoTable(file, tabulka, sloupce_list);
+            }
+            else
+            {
+                /*
+                 * 
+                 *      Zde bude vložení všech tabulek naráz  
+                 */
+            }
+            MessageBox.Show("Hodnoty vloženy.");
+            file.Close();
+        }
+
+        private void InsertIntoTable(StreamReader file, string tabulka, List<string> sloupce_list)
         {
             int counter = 0;
             string line;
-
-            System.IO.StreamReader file =
-            new System.IO.StreamReader(@filePath, Encoding.Default);
-
+            defaultContext.Database.Connection.Open();
             while ((line = file.ReadLine()) != null)
             {
                 try
                 {
-                    /*
-                     *  Každá řádek -> dodělat 
-                     * 
-                     * 
-                     * 
-                     */
+                    
+                    string command = "INSERT INTO " + tabulka + " (";
+                    string[] values = line.Split(oddelovac);
+                    String[] columnRestrictions = new String[4];
+                    columnRestrictions[2] = tabulka;
+
+                    for (int i = 0; i < sloupce_list.Count; i++)
+                    {
+                        command += sloupce_list[i];
+                        if (i < sloupce_list.Count - 1)
+                            command += ", ";
+                    }
+                    command += ") VALUES (";
+                    for (int i = 0; i < sloupce_list.Count; i++)
+                    {
+                        if (i < values.Length)
+                            command += values[i];
+                        else
+                            command += DBNull.Value;
+                        if (i < values.Length - 1)
+                            command += ", ";
+                    }
+                    command += ")";
+                    defaultContext.Database.ExecuteSqlCommand(command);
+
                 }
                 catch (SqlException e)
                 {
-                    MessageBox.Show("Chyba:" + e);
+                    MessageBox.Show("Chyba: " + e);
                 }
                 counter++;
             }
-            MessageBox.Show("Hodnoty vloženy.");
-            file.Close();
+            defaultContext.Database.Connection.Close();
+        }
+    }
+
+    public class Import
+    {
+        public Import()
+        {
+
         }
     }
 }

@@ -30,20 +30,20 @@
         {
             this.tabs = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label2 = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.od_car_rad = new System.Windows.Forms.RadioButton();
+            this.od_tab_rad = new System.Windows.Forms.RadioButton();
+            this.od_str_rad = new System.Windows.Forms.RadioButton();
+            this.all_tables_ch = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.tables_cb = new System.Windows.Forms.ComboBox();
             this.insert_bt = new System.Windows.Forms.Button();
             this.preview = new System.Windows.Forms.ListView();
             this.soubor_in_bt = new System.Windows.Forms.Button();
             this.cesta_in_tb = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.all_tables_ch = new System.Windows.Forms.CheckBox();
-            this.od_car_rad = new System.Windows.Forms.RadioButton();
-            this.od_str_rad = new System.Windows.Forms.RadioButton();
-            this.od_tab_rad = new System.Windows.Forms.RadioButton();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.label2 = new System.Windows.Forms.Label();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabs.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -79,15 +79,76 @@
             this.tabPage1.Text = "Import";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
+            // label2
             // 
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(572, 484);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Export";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(14, 118);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(102, 13);
+            this.label2.TabIndex = 29;
+            this.label2.Text = "Oddělovač sloupců:";
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.od_car_rad);
+            this.panel1.Controls.Add(this.od_tab_rad);
+            this.panel1.Controls.Add(this.od_str_rad);
+            this.panel1.Location = new System.Drawing.Point(14, 134);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(130, 72);
+            this.panel1.TabIndex = 28;
+            // 
+            // od_car_rad
+            // 
+            this.od_car_rad.AutoSize = true;
+            this.od_car_rad.Location = new System.Drawing.Point(3, 3);
+            this.od_car_rad.Name = "od_car_rad";
+            this.od_car_rad.Size = new System.Drawing.Size(53, 17);
+            this.od_car_rad.TabIndex = 25;
+            this.od_car_rad.Text = "Čárka";
+            this.od_car_rad.UseVisualStyleBackColor = true;
+            // 
+            // od_tab_rad
+            // 
+            this.od_tab_rad.AutoSize = true;
+            this.od_tab_rad.Location = new System.Drawing.Point(3, 49);
+            this.od_tab_rad.Name = "od_tab_rad";
+            this.od_tab_rad.Size = new System.Drawing.Size(70, 17);
+            this.od_tab_rad.TabIndex = 27;
+            this.od_tab_rad.Text = "Tabulátor";
+            this.od_tab_rad.UseVisualStyleBackColor = true;
+            // 
+            // od_str_rad
+            // 
+            this.od_str_rad.AutoSize = true;
+            this.od_str_rad.Checked = true;
+            this.od_str_rad.Location = new System.Drawing.Point(3, 26);
+            this.od_str_rad.Name = "od_str_rad";
+            this.od_str_rad.Size = new System.Drawing.Size(67, 17);
+            this.od_str_rad.TabIndex = 26;
+            this.od_str_rad.TabStop = true;
+            this.od_str_rad.Text = "Středník";
+            this.od_str_rad.UseVisualStyleBackColor = true;
+            // 
+            // all_tables_ch
+            // 
+            this.all_tables_ch.AutoSize = true;
+            this.all_tables_ch.Location = new System.Drawing.Point(14, 58);
+            this.all_tables_ch.Name = "all_tables_ch";
+            this.all_tables_ch.Size = new System.Drawing.Size(104, 17);
+            this.all_tables_ch.TabIndex = 24;
+            this.all_tables_ch.Text = "Všechny tabulky";
+            this.all_tables_ch.UseVisualStyleBackColor = true;
+            this.all_tables_ch.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(14, 42);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(76, 13);
+            this.label1.TabIndex = 23;
+            this.label1.Text = "Rozložení dat:";
             // 
             // tables_cb
             // 
@@ -96,6 +157,7 @@
             this.tables_cb.Name = "tables_cb";
             this.tables_cb.Size = new System.Drawing.Size(130, 21);
             this.tables_cb.TabIndex = 22;
+            this.tables_cb.SelectedValueChanged += new System.EventHandler(this.tables_cb_SelectedValueChanged);
             // 
             // insert_bt
             // 
@@ -141,76 +203,15 @@
             this.label6.TabIndex = 17;
             this.label6.Text = "Cesta k souboru pro import";
             // 
-            // label1
+            // tabPage2
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(14, 42);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(76, 13);
-            this.label1.TabIndex = 23;
-            this.label1.Text = "Rozložení dat:";
-            // 
-            // all_tables_ch
-            // 
-            this.all_tables_ch.AutoSize = true;
-            this.all_tables_ch.Location = new System.Drawing.Point(14, 58);
-            this.all_tables_ch.Name = "all_tables_ch";
-            this.all_tables_ch.Size = new System.Drawing.Size(104, 17);
-            this.all_tables_ch.TabIndex = 24;
-            this.all_tables_ch.Text = "Všechny tabulky";
-            this.all_tables_ch.UseVisualStyleBackColor = true;
-            this.all_tables_ch.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            // 
-            // od_car_rad
-            // 
-            this.od_car_rad.AutoSize = true;
-            this.od_car_rad.Location = new System.Drawing.Point(3, 3);
-            this.od_car_rad.Name = "od_car_rad";
-            this.od_car_rad.Size = new System.Drawing.Size(53, 17);
-            this.od_car_rad.TabIndex = 25;
-            this.od_car_rad.Text = "Čárka";
-            this.od_car_rad.UseVisualStyleBackColor = true;
-            // 
-            // od_str_rad
-            // 
-            this.od_str_rad.AutoSize = true;
-            this.od_str_rad.Checked = true;
-            this.od_str_rad.Location = new System.Drawing.Point(3, 26);
-            this.od_str_rad.Name = "od_str_rad";
-            this.od_str_rad.Size = new System.Drawing.Size(67, 17);
-            this.od_str_rad.TabIndex = 26;
-            this.od_str_rad.TabStop = true;
-            this.od_str_rad.Text = "Středník";
-            this.od_str_rad.UseVisualStyleBackColor = true;
-            // 
-            // od_tab_rad
-            // 
-            this.od_tab_rad.AutoSize = true;
-            this.od_tab_rad.Location = new System.Drawing.Point(3, 49);
-            this.od_tab_rad.Name = "od_tab_rad";
-            this.od_tab_rad.Size = new System.Drawing.Size(70, 17);
-            this.od_tab_rad.TabIndex = 27;
-            this.od_tab_rad.Text = "Tabulátor";
-            this.od_tab_rad.UseVisualStyleBackColor = true;
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.od_car_rad);
-            this.panel1.Controls.Add(this.od_tab_rad);
-            this.panel1.Controls.Add(this.od_str_rad);
-            this.panel1.Location = new System.Drawing.Point(14, 134);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(130, 72);
-            this.panel1.TabIndex = 28;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(14, 118);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(102, 13);
-            this.label2.TabIndex = 29;
-            this.label2.Text = "Oddělovač sloupců:";
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(572, 309);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Export";
+            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // Main
             // 

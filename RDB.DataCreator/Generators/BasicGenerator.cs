@@ -1,10 +1,9 @@
 ﻿using RDB.Data.DAL;
 using RDB.Data.Models;
+using RDB.DataCreator.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RDB.DataCreator.Generators
 {
@@ -29,9 +28,13 @@ namespace RDB.DataCreator.Generators
 
         public void Generate()
         {
-            List<String> BusPlates = GenerateBuses();
+            IEnumerable<String> Buses = GenerateBuses();
 
-            //List<String> Places = 
+            IEnumerable<String> Routes = GenerateRoutes();
+
+            IEnumerable<String> Drivers = GenerateDrivers();
+
+            //IEnumerable<Drive> Drives = GenerateDrives(Routes, Buses, Drivers);
 
             defaultContext.SaveChanges();
         }
@@ -40,51 +43,116 @@ namespace RDB.DataCreator.Generators
 
         #region Private methods
 
-        private void GenerateModels()
+        private IEnumerable<String> GenerateModels()
         {
-            defaultContext.Models.AddRange(new Model[]
+            List<Model> models = new List<Model>();
+
+            for (Int32 i = 0; i < 100; i++)
             {
-                new Model
+                models.Add(new Model
                 {
-                    Name= "Karosa"
-                },
-                new Model
-                {
-                    Name = "Iveco"
-                },
-                new Model
-                {
-                    Name= "Volvo"
-                }
-            });
+                    Name = Randomize.Text()
+                });
+            }
+
+            defaultContext.Models.AddRange(models);
+
+            return models.Select(m => m.Name);
         }
 
-        private List<String> GenerateBuses()
+        private IEnumerable<String> GenerateBuses()
         {
-            GenerateModels();
+            IEnumerable<String> models = GenerateModels();
 
-            List<Bus> buses = new List<Bus>
+            List<Bus> buses = new List<Bus>();
+            for (Int32 i = 0; i < 500; i++)
             {
-                new Bus
+                buses.Add(new Bus
                 {
-                    Plate = "123 4567",
-                    ModelName ="Karosa"
-                },
-                new Bus
-                {
-                    Plate = "4LC 4732",
-                    ModelName = "Iveco"
-                },
-                new Bus
-                {
-                    Plate = "1AC 7D4C1",
-                    ModelName = "Volvo"
-                }
-            };
+                    Plate = Randomize.Plate(),
+                    ModelName = models.ElementAt(Randomize.Position(models.Count()))
+                });
+            }
 
             defaultContext.Buses.AddRange(buses);
 
             return buses.Select(b => b.Plate).ToList();
+        }
+
+        private IEnumerable<String> GenerateLocations()
+        {
+            List<Location> locations = new List<Location>();
+
+            for (Int32 i = 0; i < 1000; i++)
+            {
+                locations.Add(new Location
+                {
+                    Name = Randomize.Text()
+                });
+            }
+
+            defaultContext.Locations.AddRange(locations);
+
+            return locations.Select(l => l.Name);
+        }
+
+        private IEnumerable<String> GenerateRoutes()
+        {
+            IEnumerable<String> locations = GenerateLocations();
+
+            List<Route> routes = new List<Route>();
+            for (Int32 i = 0; i < 100; i++)
+            {
+                routes.Add(new Route
+                {
+                    Number = Randomize.String(20).ToUpper(),
+                    DepartureName = locations.ElementAt(Randomize.Position(locations.Count())),
+                    ArrivalName = locations.ElementAt(Randomize.Position(locations.Count()))
+                });
+            }
+
+            defaultContext.Routes.AddRange(routes);
+
+            return routes.Select(r => r.Number);
+        }
+
+        private IEnumerable<String> GenerateDrivers()
+        {
+            List<Driver> drivers = new List<Driver>();
+            for (Int32 i = 0; i < 100; i++)
+            {
+                drivers.Add(new Driver
+                {
+                    LicenseNumber = Randomize.Numeric(25),
+                    Firstname = Randomize.Text(),
+                    Surname = Randomize.Text()
+                });
+            }
+
+            defaultContext.Drivers.AddRange(drivers);
+
+            return drivers.Select(d => d.LicenseNumber);
+        }
+
+        private IEnumerable<Drive> GenerateDrives(IEnumerable<String> routes, IEnumerable<String> buses, IEnumerable<String> drivers)
+        {
+            DateTime date = new DateTime(2019, 3, 24);
+
+            List<Drive> drives = new List<Drive>();
+            for (Int32 i = 0; i < 10000; i++)
+            {
+                drives.Add(new Drive
+                {
+                    Time = BitConverter.GetBytes(date.AddHours(i).Subtract(new DateTime(1970, 1, 1)).TotalSeconds),
+                    RouteNumber = routes.ElementAt(Randomize.Position(routes.Count())),
+                    BusPlate = buses.ElementAt(Randomize.Position(buses.Count())),
+                    DriveLicenseNumber = drivers.ElementAt(Randomize.Position(drivers.Count()))
+                });
+            }
+
+            defaultContext.Drives.AddRange(drives);
+
+            return drives;
         }
 
         #endregion

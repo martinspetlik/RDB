@@ -21,9 +21,8 @@ namespace RDB.Data.Models
 
         [Required]
         [ForeignKey("Drive")]
-        [Column("cas", Order = 0)]
-        [Timestamp]
-        public Byte[] DriveTime { get; set; }
+        [Column("cas", Order = 0, TypeName = "timestamp")]
+        public DateTime DriveTime { get; set; }
 
         [Required]
         [ForeignKey("Drive")]

@@ -1,8 +1,11 @@
-﻿using RDB.Data.Models;
+﻿using MySql.Data.EntityFramework;
+using RDB.Data.Models;
+using System;
 using System.Data.Entity;
 
 namespace RDB.Data.DAL
 {
+    [DbConfigurationType(typeof(MySqlEFConfiguration))]
     public class DefaultContext : DbContext
     {
         #region Properties

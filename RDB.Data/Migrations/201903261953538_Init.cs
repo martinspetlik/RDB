@@ -1,6 +1,5 @@
 namespace RDB.Data.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
     
     public partial class Init : DbMigration
@@ -11,8 +10,8 @@ namespace RDB.Data.Migrations
                 "dbo.Autobus",
                 c => new
                     {
-                        spz = c.String(nullable: false, maxLength: 50),
-                        znacka = c.String(nullable: false, maxLength: 50),
+                        spz = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
+                        znacka = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
                     })
                 .PrimaryKey(t => t.spz)
                 .ForeignKey("dbo.Znacka", t => t.znacka, cascadeDelete: true)
@@ -22,7 +21,7 @@ namespace RDB.Data.Migrations
                 "dbo.Znacka",
                 c => new
                     {
-                        znacka = c.String(nullable: false, maxLength: 50),
+                        znacka = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
                     })
                 .PrimaryKey(t => t.znacka);
             
@@ -30,9 +29,9 @@ namespace RDB.Data.Migrations
                 "dbo.Klient",
                 c => new
                     {
-                        email = c.String(nullable: false, maxLength: 50),
-                        jmeno = c.String(nullable: false, maxLength: 50),
-                        prijmeni = c.String(nullable: false, maxLength: 50),
+                        email = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
+                        jmeno = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
+                        prijmeni = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
                     })
                 .PrimaryKey(t => t.email);
             
@@ -40,9 +39,9 @@ namespace RDB.Data.Migrations
                 "dbo.Kontakt",
                 c => new
                     {
-                        hodnota = c.String(nullable: false, maxLength: 50),
-                        typ = c.String(nullable: false, maxLength: 50),
-                        cislo_rp = c.String(nullable: false, maxLength: 50),
+                        hodnota = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
+                        typ = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
+                        cislo_rp = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
                     })
                 .PrimaryKey(t => t.hodnota)
                 .ForeignKey("dbo.TypKontaktu", t => t.typ, cascadeDelete: true)
@@ -54,7 +53,7 @@ namespace RDB.Data.Migrations
                 "dbo.TypKontaktu",
                 c => new
                     {
-                        typ = c.String(nullable: false, maxLength: 50),
+                        typ = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
                     })
                 .PrimaryKey(t => t.typ);
             
@@ -62,9 +61,9 @@ namespace RDB.Data.Migrations
                 "dbo.Ridic",
                 c => new
                     {
-                        cislo_rp = c.String(nullable: false, maxLength: 50),
-                        jmeno = c.String(nullable: false, maxLength: 50),
-                        prijmeni = c.String(nullable: false, maxLength: 50),
+                        cislo_rp = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
+                        jmeno = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
+                        prijmeni = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
                     })
                 .PrimaryKey(t => t.cislo_rp);
             
@@ -72,10 +71,11 @@ namespace RDB.Data.Migrations
                 "dbo.Jizda",
                 c => new
                     {
-                        cas = c.Binary(nullable: false, fixedLength: true, timestamp: true, storeType: "rowversion"),
-                        linka = c.String(nullable: false, maxLength: 50),
-                        spz = c.String(nullable: false, maxLength: 50),
-                        cislo_rp = c.String(nullable: false, maxLength: 50),
+                        cas = c.DateTime(nullable: false, precision: 0, storeType: "timestamp"),
+                        linka = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
+                        spz = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
+                        cislo_rp = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
+                        Pole = c.String(unicode: false),
                     })
                 .PrimaryKey(t => new { t.cas, t.linka })
                 .ForeignKey("dbo.Autobus", t => t.spz, cascadeDelete: true)
@@ -89,9 +89,9 @@ namespace RDB.Data.Migrations
                 "dbo.Trasy",
                 c => new
                     {
-                        linka = c.String(nullable: false, maxLength: 50),
-                        odkud = c.String(nullable: false, maxLength: 50),
-                        kam = c.String(nullable: false, maxLength: 50),
+                        linka = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
+                        odkud = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
+                        kam = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
                     })
                 .PrimaryKey(t => t.linka)
                 .ForeignKey("dbo.Lokalita", t => t.kam)
@@ -103,7 +103,7 @@ namespace RDB.Data.Migrations
                 "dbo.Lokalita",
                 c => new
                     {
-                        nazev = c.String(nullable: false, maxLength: 50),
+                        nazev = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
                     })
                 .PrimaryKey(t => t.nazev);
             
@@ -111,8 +111,8 @@ namespace RDB.Data.Migrations
                 "dbo.Mezizastavka",
                 c => new
                     {
-                        nazev = c.String(nullable: false, maxLength: 50),
-                        linka = c.String(nullable: false, maxLength: 50),
+                        nazev = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
+                        linka = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
                     })
                 .PrimaryKey(t => new { t.nazev, t.linka })
                 .ForeignKey("dbo.Lokalita", t => t.nazev, cascadeDelete: true)
@@ -124,10 +124,10 @@ namespace RDB.Data.Migrations
                 "dbo.Jizdenka",
                 c => new
                     {
-                        cas = c.Binary(nullable: false, fixedLength: true, timestamp: true, storeType: "rowversion"),
-                        linka = c.String(nullable: false, maxLength: 50),
+                        cas = c.DateTime(nullable: false, precision: 0, storeType: "timestamp"),
+                        linka = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
                         cislo = c.Long(nullable: false, identity: true),
-                        email = c.String(maxLength: 50),
+                        email = c.String(maxLength: 50, storeType: "nvarchar"),
                     })
                 .PrimaryKey(t => t.cislo)
                 .ForeignKey("dbo.Klient", t => t.email)

@@ -30,11 +30,17 @@ namespace RDB.DataCreator.Generators
         {
             IEnumerable<String> Buses = GenerateBuses();
 
+            defaultContext.SaveChanges();
+
             IEnumerable<String> Routes = GenerateRoutes();
+
+            defaultContext.SaveChanges();
 
             IEnumerable<String> Drivers = GenerateDrivers();
 
-            //IEnumerable<Drive> Drives = GenerateDrives(Routes, Buses, Drivers);
+            defaultContext.SaveChanges();
+
+            IEnumerable<Drive> Drives = GenerateDrives(Routes, Buses, Drivers);
 
             defaultContext.SaveChanges();
         }
@@ -105,7 +111,7 @@ namespace RDB.DataCreator.Generators
             {
                 routes.Add(new Route
                 {
-                    Number = Randomize.String(20).ToUpper(),
+                    Number = Randomize.String(40).ToUpper(),
                     DepartureName = locations.ElementAt(Randomize.Position(locations.Count())),
                     ArrivalName = locations.ElementAt(Randomize.Position(locations.Count()))
                 });
@@ -136,14 +142,14 @@ namespace RDB.DataCreator.Generators
 
         private IEnumerable<Drive> GenerateDrives(IEnumerable<String> routes, IEnumerable<String> buses, IEnumerable<String> drivers)
         {
-            DateTime date = new DateTime(2019, 3, 24);
+            DateTime date = DateTime.Now.Date;
 
             List<Drive> drives = new List<Drive>();
-            for (Int32 i = 0; i < 10000; i++)
+            for (Int32 i = 0; i < 5000; i++)
             {
                 drives.Add(new Drive
                 {
-                    Time = BitConverter.GetBytes(date.AddHours(i).Subtract(new DateTime(1970, 1, 1)).TotalSeconds),
+                    Time = date.AddHours(i),
                     RouteNumber = routes.ElementAt(Randomize.Position(routes.Count())),
                     BusPlate = buses.ElementAt(Randomize.Position(buses.Count())),
                     DriveLicenseNumber = drivers.ElementAt(Randomize.Position(drivers.Count()))

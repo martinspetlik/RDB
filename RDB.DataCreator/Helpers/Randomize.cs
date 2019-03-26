@@ -40,7 +40,7 @@ namespace RDB.DataCreator.Helpers
 
         public static String Text()
         {
-            return String(Number(3, 12));
+            return String(Number(10, 25));
         }
 
         public static Int32 Position(Int32 length)

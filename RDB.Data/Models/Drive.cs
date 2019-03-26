@@ -10,9 +10,8 @@ namespace RDB.Data.Models
         #region Properties
 
         [Key]
-        [Column("cas", Order = 0)]
-        [Timestamp]
-        public Byte[] Time { get; set; }
+        [Column("cas", Order = 0, TypeName = "timestamp")]
+        public DateTime Time { get; set; }
 
         [Required]
         [Column("spz")]
@@ -34,6 +33,8 @@ namespace RDB.Data.Models
         public String RouteNumber { get; set; }
 
         public virtual Route Route { get; set; }
+
+        public String Pole { get; set; }
 
         #endregion
     }

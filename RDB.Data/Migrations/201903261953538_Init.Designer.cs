@@ -13,7 +13,7 @@ namespace RDB.Data.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201903241204333_Init"; }
+            get { return "201903261953538_Init"; }
         }
         
         string IMigrationMetadata.Source

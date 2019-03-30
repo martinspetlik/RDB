@@ -320,6 +320,7 @@
             this.all_tables_ch_e.TabIndex = 37;
             this.all_tables_ch_e.Text = "Všechny tabulky";
             this.all_tables_ch_e.UseVisualStyleBackColor = true;
+            this.all_tables_ch_e.CheckedChanged += new System.EventHandler(this.all_tables_ch_e_CheckedChanged);
             // 
             // label4
             // 
@@ -337,6 +338,7 @@
             this.tables_cb_e.Name = "tables_cb_e";
             this.tables_cb_e.Size = new System.Drawing.Size(130, 21);
             this.tables_cb_e.TabIndex = 35;
+            this.tables_cb_e.SelectedValueChanged += new System.EventHandler(this.tables_cb_e_SelectedValueChanged);
             // 
             // export_bt
             // 
@@ -346,6 +348,7 @@
             this.export_bt.TabIndex = 34;
             this.export_bt.Text = "Export";
             this.export_bt.UseVisualStyleBackColor = true;
+            this.export_bt.Click += new System.EventHandler(this.export_bt_Click);
             // 
             // preview_e
             // 

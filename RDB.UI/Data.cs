@@ -22,7 +22,6 @@ namespace RDB.UI
             this.defaultContext = defaultContext;
             bs.DataSource = GetScheme();
             tables_cb.DataSource = bs;
-
         }
         #endregion
 
@@ -36,11 +35,26 @@ namespace RDB.UI
             foreach (DataRow row in dt.Rows)
             {
                 string tablename = (string)row[2];
-                tables.Add(tablename);
+                if(tablename != "__migrationhistory")
+                    tables.Add(tablename);
             }
             defaultContext.Database.Connection.Close();
             return tables;
 
+        }
+
+        public List<string> GetColumns(string tabulka)    //získání názvů sloupců z tabulky pro vkládání dat
+        {
+            List<string> sloupce_list = new List<string>();
+            String[] columnRestrictions = new String[4];
+            columnRestrictions[2] = tabulka;
+            DataTable sloupce = defaultContext.Database.Connection.GetSchema("Columns", columnRestrictions);
+            foreach (DataRow row in sloupce.Rows)
+            {
+                string column = (string)row[3];
+                sloupce_list.Add(column);
+            }
+            return sloupce_list;
         }
 
         #endregion

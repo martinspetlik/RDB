@@ -91,15 +91,11 @@ namespace RDB.UI
             {
                 //openFileDialog.InitialDirectory = "c:\\";
                 openFileDialog.Filter = "Textové soubory (*.txt)|*.txt|csv soubory (*.csv)|*.csv|xsl soubory (*.xsl)|*.xsl|Všechny soubory (*.*)|*.*";
+                openFileDialog.Title = "Otevřít soubor s daty";
                 openFileDialog.FilterIndex = 2;
                 openFileDialog.RestoreDirectory = true;
 
-                if (od_car_rad.Checked)
-                    Oddelovac = ',';
-                else if (od_str_rad.Checked)
-                    Oddelovac = ';';
-                else if (od_tab_rad.Checked)
-                    Oddelovac = '\t';
+                SetSeparator(od_car_rad, od_str_rad, od_tab_rad);
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -116,24 +112,18 @@ namespace RDB.UI
         {
             if (filePath.Length > 0 && ((tabulka.Length > 0 && !all_tables) || all_tables))
             {
-                List<string> sloupce_list = new List<string>();
-                try                                                 //získání názvů sloupců pro vkládání dat
+                try                                                 
                 {
-                    String[] columnRestrictions = new String[4];
-                    columnRestrictions[2] = tabulka;
-                    DataTable sloupce = data.defaultContext.Database.Connection.GetSchema("Columns", columnRestrictions);
-                    foreach (DataRow row in sloupce.Rows)
-                    {
-                        string column = (string)row[3];
-                        sloupce_list.Add(column);
-                    }
-
-                    InsertColumns(sloupce_list);    //volání vkládání
+                    InsertColumns(data.GetColumns(Tabulka));    //volání vkládání
                 }
                 catch (SqlException exp)
                 {
                     MessageBox.Show("Chyba:" + exp);
                 }
+            }
+            else if(all_tables && filePath.Length > 0)
+            {
+
             }
         }
 
@@ -202,19 +192,20 @@ namespace RDB.UI
 
             if (!all_tables)
             {
-                InsertIntoTable(file, tabulka, sloupce_list);
+                InsertIntoTable(file, sloupce_list);
             }
             else
             {
                 /*
                  *      Zde bude vložení všech tabulek naráz  
                  */
+                InsertIntoAll(file);
             }
             MessageBox.Show("Hodnoty vloženy.");
             file.Close();
         }
 
-        private void InsertIntoTable(StreamReader file, string tabulka, List<string> sloupce_list)
+        private void InsertIntoTable(StreamReader file, List<string> sloupce_list)
         {
             int counter = 0;
             string line;
@@ -254,6 +245,21 @@ namespace RDB.UI
                 }
                 counter++;
             }
+        }
+
+        private void InsertIntoAll(StreamReader file)
+        {
+
+        }
+
+        private void SetSeparator(RadioButton od_car_rad, RadioButton od_str_rad, RadioButton od_tab_rad)
+        {
+            if (od_car_rad.Checked)
+                Oddelovac = ',';
+            else if (od_str_rad.Checked)
+                Oddelovac = ';';
+            else if (od_tab_rad.Checked)
+                Oddelovac = '\t';
         }
 
         #endregion

@@ -27,7 +27,6 @@ namespace RDB.UI
         public Export(DefaultContext defaultContext, BindingSource bs, ComboBox tables_cb)
         {
             data = new Data(defaultContext, bs, tables_cb);
-            data.GetScheme();
         }
         #endregion
 
@@ -80,107 +79,79 @@ namespace RDB.UI
 
         #endregion
 
-        public void OpenFile(RadioButton od_car_rad, RadioButton od_str_rad, RadioButton od_tab_rad, TextBox cesta_in_tb, Button insert_bt, ListView preview)
+
+        #region Public methods
+
+        public void ShowPreview(ListView preview)
         {
-            var fileContent = string.Empty;
-            //filePath = string.Empty;
-
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            if (Tabulka.Length > 0 && !All_tables)
             {
-                //openFileDialog.InitialDirectory = "c:\\";
-                openFileDialog.Filter = "Textové soubory (*.txt)|*.txt|csv soubory (*.csv)|*.csv|xsl soubory (*.xsl)|*.xsl|Všechny soubory (*.*)|*.*";
-                openFileDialog.FilterIndex = 2;
-                openFileDialog.RestoreDirectory = true;
-
-                if (od_car_rad.Checked)
-                    Oddelovac = ',';
-                else if (od_str_rad.Checked)
-                    Oddelovac = ';';
-                else if (od_tab_rad.Checked)
-                    Oddelovac = '\t';
-
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    //Get the path of specified file
-                    preview.Items.Clear();
-                    OpenCSV(openFileDialog, preview);
-                    cesta_in_tb.Text = FilePath;
-                    insert_bt.Enabled = true;
-                }
+                PreviewTable(data.GetColumns(Tabulka));
+            }
+            else if(All_tables)
+            {
+                /*
+                 *  Podle struktury dat bude vypis nahledu
+                 */
             }
         }
 
-        private void OpenCSV(OpenFileDialog openFileDialog, ListView preview)
+        public void SaveFile(RadioButton od_car_rad, RadioButton od_str_rad, RadioButton od_tab_rad)
         {
-            filePath = openFileDialog.FileName;
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            saveFileDialog1.Filter = "Textové soubory (*.txt)|*.txt|csv soubory (*.csv)|*.csv|xsl soubory (*.xsl)|*.xsl|Všechny soubory (*.*)|*.*";
+            saveFileDialog1.Title = "Uložit data z databáze";
+            saveFileDialog1.ShowDialog();
+            StreamWriter writer = null;
 
-            //Read the contents of the file into a stream
-            //var fileStream;
-            try
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK && saveFileDialog1.FileName != "")
             {
-                var fileStream = openFileDialog.OpenFile();
-                using (StreamReader reader = new StreamReader(fileStream, Encoding.Default))
-                {
-                    bool prvni = true;
-                    //fileContent = reader.ReadToEnd();
-                    preview.View = View.Details;
-
-                    for (int i = 0; i < 10; i++)
-                    {
-                        try
-                        {
-                            var line = reader.ReadLine();
-                            if (line != null)
-                            {
-                                string[] values = line.Split(oddelovac);
-                                string[] arr = new string[values.Length];
-                                //var items = preview.Items;
-                                //ListViewItem lvi1 = new ListViewItem();
-                                ListViewItem item1 = new ListViewItem();
-                                if (prvni)
-                                {
-                                    for (int j = 0; j < values.Length; j++)
-                                    {
-                                        preview.Columns.Add("Sloupec " + j);
-                                        prvni = false;
-                                    }
-                                }
-                                preview.Items.Add(new ListViewItem(values));
-                                //preview.Items.Add(values);
-
-                            }
-                        }
-                        catch { }
-
-                    }
-
-                    preview.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-                    preview.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-                }
-            }
-            catch
-            {
-                MessageBox.Show("SOubor nemohl být otevřen, může být otevřen v jiné aplikaci.");
+                SetSeparator(od_car_rad, od_str_rad, od_tab_rad);
+               
+                ExportData();
+                /*
+                 *  Zde bude write z db do souboru
+                 *  Popřípadě v jiné metodě
+                 */
+                writer = new StreamWriter(saveFileDialog1.Filter);
+                writer.Close();
+                System.Data.Entity.DbSet a = data.defaultContext.Contacts;
             }
         }
 
-        public void Insert()
+        #endregion
+
+        #region Private methods
+
+        private void PreviewTable(List<string> sloupce_list)
+        {
+            int counter = 0;
+            string line;
+            string command = TableSelect(sloupce_list);
+        }
+
+        private string TableSelect(List<string> sloupce_list)
+        {
+            string command = "SELECT ";
+            for (int i = 0; i < sloupce_list.Count; i++)
+            {
+                command += sloupce_list[i];
+                if (i < sloupce_list.Count - 1)
+                    command += ", ";
+            }
+            command += " FROM " + Tabulka;
+            return command;
+        }
+
+        private void ExportData()
         {
             if (filePath.Length > 0 && ((tabulka.Length > 0 && !all_tables) || all_tables))
             {
+                
                 List<string> sloupce_list = new List<string>();
-                try                                                 //získání názvů sloupců pro vkládání dat
+                try                                                
                 {
-                    String[] columnRestrictions = new String[4];
-                    columnRestrictions[2] = tabulka;
-                    DataTable sloupce = data.defaultContext.Database.Connection.GetSchema("Columns", columnRestrictions);
-                    foreach (DataRow row in sloupce.Rows)
-                    {
-                        string column = (string)row[3];
-                        sloupce_list.Add(column);
-                    }
-
-                    InsertColumns(sloupce_list);    //volání vkládání
+                    InsertColumns(data.GetColumns(Tabulka));    //volání vkládání
                 }
                 catch (SqlException exp)
                 {
@@ -249,5 +220,19 @@ namespace RDB.UI
                 counter++;
             }
         }
+
+        private void SetSeparator(RadioButton od_car_rad, RadioButton od_str_rad, RadioButton od_tab_rad)
+        {
+            if (od_car_rad.Checked)
+                Oddelovac = ',';
+            else if (od_str_rad.Checked)
+                Oddelovac = ';';
+            else if (od_tab_rad.Checked)
+                Oddelovac = '\t';
+        }
+
+        
+
+        #endregion
     }
 }

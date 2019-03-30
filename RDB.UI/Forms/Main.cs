@@ -30,12 +30,11 @@ namespace RDB.UI.Forms
             defaultContext = new DefaultContext();
             //defaultContext.Database.Connection.Open();
             InitializeComponent();
-            //GetScheme();
             insert_bt.Enabled = false;
+            export_bt.Enabled = false;
             BindingSource bs = new BindingSource();
-            imp = new Import(defaultContext, bs, tables_cb);
-
             exp = new Export(defaultContext, bs, tables_cb_e);
+            imp = new Import(defaultContext, bs, tables_cb);
         }
 
         #endregion
@@ -68,7 +67,8 @@ namespace RDB.UI.Forms
 
         private void tables_cb_SelectedValueChanged(object sender, EventArgs e)
         {
-            imp.Tabulka = tables_cb.Text;
+            if (imp != null)
+                imp.Tabulka = tables_cb.Text;
         }
 
         #endregion
@@ -77,9 +77,40 @@ namespace RDB.UI.Forms
 
         private void preview_bt_Click(object sender, EventArgs e)   //Náhled dat z DB
         {
+            exp.ShowPreview(preview_e);
+        }
 
+        private void all_tables_ch_e_CheckedChanged(object sender, EventArgs e)
+        {
+            if (all_tables_ch_e.Checked)
+            {
+                tables_cb_e.Enabled = false;
+                exp.All_tables = true;
+                export_bt.Enabled = true;
+            }
+            else
+            {
+                tables_cb_e.Enabled = true;
+                exp.All_tables = false;
+                if (tables_cb_e.Text.Length > 0)
+                    export_bt.Enabled = true;
+                else
+                    export_bt.Enabled = false;
+            }
+        }
+
+        private void tables_cb_e_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if(exp != null)
+                exp.Tabulka = tables_cb_e.Text;
+        }
+
+        private void export_bt_Click(object sender, EventArgs e)
+        {
+            exp.SaveFile(od_car_rad_e, od_str_rad_e, od_tab_rad_e);
         }
 
         #endregion
+
     }
 }

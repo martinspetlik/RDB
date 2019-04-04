@@ -142,7 +142,7 @@ namespace RDB.DataCreator.Generators
 
         private IEnumerable<Drive> GenerateDrives(IEnumerable<String> routes, IEnumerable<String> buses, IEnumerable<String> drivers)
         {
-            DateTime date = new DateTime(DateTime.Now.Year, 1, 1);
+            DateTime date = new DateTime(DateTime.Now.Year, 4, 1);
 
             List<Drive> drives = new List<Drive>();
             for (Int32 i = 0; i < 5000; i++)

@@ -30,6 +30,10 @@ namespace RDB.UI.Forms
             defaultContext = new DefaultContext();
             //defaultContext.Database.Connection.Open();
             InitializeComponent();
+
+            Watermark marker = new Watermark(defaultContext);
+            marker.Watermarking();
+
             insert_bt.Enabled = false;
             export_bt.Enabled = false;
             BindingSource bs = new BindingSource();

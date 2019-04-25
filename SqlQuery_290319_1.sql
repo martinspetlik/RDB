@@ -22,27 +22,27 @@ FROM `__MigrationHistory` AS `Project1`
   END IF;
 
   IF CurrentMigration < '201903261953538_Init' THEN 
-create table `Autobus` (`spz` nvarchar(50)  not null ,`znacka` nvarchar(50)  not null ,primary key ( `spz`) ) engine=InnoDb auto_increment=0;
+create table `Autobus` (`spz` nvarchar(50)  not null collate utf8_bin ,`znacka` nvarchar(50)  not null collate utf8_bin ,primary key ( `spz`) ) engine=InnoDb auto_increment=0;
 CREATE index  `IX_znacka` on `Autobus` (`znacka` DESC) using HASH;
-create table `Znacka` (`znacka` nvarchar(50)  not null ,primary key ( `znacka`) ) engine=InnoDb auto_increment=0;
-create table `Klient` (`email` nvarchar(50)  not null ,`jmeno` nvarchar(50)  not null ,`prijmeni` nvarchar(50)  not null ,primary key ( `email`) ) engine=InnoDb auto_increment=0;
-create table `Kontakt` (`hodnota` nvarchar(50)  not null ,`typ` nvarchar(50)  not null ,`cislo_rp` nvarchar(50)  not null ,primary key ( `hodnota`) ) engine=InnoDb auto_increment=0;
+create table `Znacka` (`znacka` nvarchar(50)  not null collate utf8_bin ,primary key ( `znacka`) ) engine=InnoDb auto_increment=0;
+create table `Klient` (`email` nvarchar(50)  not null collate utf8_bin ,`jmeno` nvarchar(50)  not null collate utf8_bin ,`prijmeni` nvarchar(50)  not null collate utf8_bin ,primary key ( `email`) ) engine=InnoDb auto_increment=0;
+create table `Kontakt` (`hodnota` nvarchar(50)  not null collate utf8_bin ,`typ` nvarchar(50)  not null collate utf8_bin ,`cislo_rp` nvarchar(50)  not null collate utf8_bin ,primary key ( `hodnota`) ) engine=InnoDb auto_increment=0;
 CREATE index  `IX_typ` on `Kontakt` (`typ` DESC) using HASH;
 CREATE index  `IX_cislo_rp` on `Kontakt` (`cislo_rp` DESC) using HASH;
-create table `TypKontaktu` (`typ` nvarchar(50)  not null ,primary key ( `typ`) ) engine=InnoDb auto_increment=0;
-create table `Ridic` (`cislo_rp` nvarchar(50)  not null ,`jmeno` nvarchar(50)  not null ,`prijmeni` nvarchar(50)  not null ,primary key ( `cislo_rp`) ) engine=InnoDb auto_increment=0;
-create table `Jizda` (`cas` timestamp not null ,`linka` nvarchar(50)  not null ,`spz` nvarchar(50)  not null ,`cislo_rp` nvarchar(50)  not null ,`Pole` longtext,primary key ( `cas`,`linka`) ) engine=InnoDb auto_increment=0;
+create table `TypKontaktu` (`typ` nvarchar(50)  not null collate utf8_bin ,primary key ( `typ`) ) engine=InnoDb auto_increment=0;
+create table `Ridic` (`cislo_rp` nvarchar(50)  not null collate utf8_bin ,`jmeno` nvarchar(50)  not null collate utf8_bin ,`prijmeni` nvarchar(50)  not null collate utf8_bin ,primary key ( `cislo_rp`) ) engine=InnoDb auto_increment=0;
+create table `Jizda` (`cas` timestamp not null ,`linka` nvarchar(50)  not null collate utf8_bin ,`spz` nvarchar(50)  not null collate utf8_bin ,`cislo_rp` nvarchar(50)  not null collate utf8_bin ,`Pole` longtext,primary key ( `cas`,`linka`) ) engine=InnoDb auto_increment=0;
 CREATE index  `IX_linka` on `Jizda` (`linka` DESC) using HASH;
 CREATE index  `IX_spz` on `Jizda` (`spz` DESC) using HASH;
 CREATE index  `IX_cislo_rp` on `Jizda` (`cislo_rp` DESC) using HASH;
-create table `Trasy` (`linka` nvarchar(50)  not null ,`odkud` nvarchar(50)  not null ,`kam` nvarchar(50)  not null ,primary key ( `linka`) ) engine=InnoDb auto_increment=0;
+create table `Trasy` (`linka` nvarchar(50)  not null collate utf8_bin ,`odkud` nvarchar(50)  not null collate utf8_bin ,`kam` nvarchar(50)  not null collate utf8_bin ,primary key ( `linka`) ) engine=InnoDb auto_increment=0;
 CREATE index  `IX_odkud` on `Trasy` (`odkud` DESC) using HASH;
 CREATE index  `IX_kam` on `Trasy` (`kam` DESC) using HASH;
-create table `Lokalita` (`nazev` nvarchar(50)  not null ,primary key ( `nazev`) ) engine=InnoDb auto_increment=0;
-create table `Mezizastavka` (`nazev` nvarchar(50)  not null ,`linka` nvarchar(50)  not null ,primary key ( `nazev`,`linka`) ) engine=InnoDb auto_increment=0;
+create table `Lokalita` (`nazev` nvarchar(50)  not null collate utf8_bin ,primary key ( `nazev`) ) engine=InnoDb auto_increment=0;
+create table `Mezizastavka` (`nazev` nvarchar(50)  not null collate utf8_bin ,`linka` nvarchar(50)  not null collate utf8_bin ,primary key ( `nazev`,`linka`) ) engine=InnoDb auto_increment=0;
 CREATE index  `IX_nazev` on `Mezizastavka` (`nazev` DESC) using HASH;
 CREATE index  `IX_linka` on `Mezizastavka` (`linka` DESC) using HASH;
-create table `Jizdenka` (`cas` timestamp not null ,`linka` nvarchar(50)  not null ,`cislo` bigint not null  auto_increment ,`email` nvarchar(50) ,primary key ( `cislo`) ) engine=InnoDb auto_increment=0;
+create table `Jizdenka` (`cas` timestamp not null ,`linka` nvarchar(50)  not null collate utf8_bin ,`cislo` bigint not null  auto_increment ,`email` nvarchar(50) collate utf8_bin ,primary key ( `cislo`) ) engine=InnoDb auto_increment=0;
 CREATE index  `IX_cas_linka` on `Jizdenka` (`cas` DESC,`linka` DESC) using HASH;
 CREATE index  `IX_email` on `Jizdenka` (`email` DESC) using HASH;
 alter table `Autobus` add constraint `FK_Autobus_Znacka_znacka`  foreign key (`znacka`) references `Znacka` ( `znacka`)  on update cascade on delete cascade ;

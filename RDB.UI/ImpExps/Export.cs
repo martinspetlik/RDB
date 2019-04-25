@@ -1,7 +1,6 @@
 ﻿using RDB.Data.DAL;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using System.Data.SqlClient;
@@ -12,39 +11,26 @@ namespace RDB.UI.ImpExps
 {
     public class Export : ImpExpBase
     {
-        #region Fields
-
-        List<string> tables = new List<string>();
-        
-        #endregion
-
         #region Constructors 
 
         public Export(DefaultContext defaultContext, ComboBox tables_cb, List<String> tableNames) : base(defaultContext, tables_cb, tableNames) { }
 
         #endregion
 
-
         #region Public methods
 
         public void ShowPreview(ListView preview)
         {
-            if (!String.IsNullOrEmpty(TableName) && !AllTables)
+            if (!String.IsNullOrEmpty(TableName))
                 PreviewTable(defaultContext.GetTableColumns(TableName));
-            else if (AllTables)
-            {
-                /*
-                 *  Podle struktury dat bude vypis nahledu
-                 */
-            }
         }
 
         public void SaveFile(RadioButton od_car_rad, RadioButton od_str_rad, RadioButton od_tab_rad)
         {
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-            saveFileDialog1.Filter = "Textové soubory (*.txt)|*.txt|csv soubory (*.csv)|*.csv|xsl soubory (*.xsl)|*.xsl|Všechny soubory (*.*)|*.*";
+            saveFileDialog1.Filter = "CSV soubory (*.csv)|*.csv";
             saveFileDialog1.Title = "Uložit data z databáze";
-            saveFileDialog1.ShowDialog();
+            
             StreamWriter writer = null;
 
             if (saveFileDialog1.ShowDialog() == DialogResult.OK && saveFileDialog1.FileName != "")
@@ -88,7 +74,7 @@ namespace RDB.UI.ImpExps
 
         private void ExportData()
         {
-            if (!String.IsNullOrEmpty(FilePath) && (AllTables || !String.IsNullOrEmpty(TableName)))
+            if (!String.IsNullOrEmpty(FilePath) && !String.IsNullOrEmpty(TableName))
             {
                 List<string> sloupce_list = new List<string>();
                 try
@@ -102,20 +88,16 @@ namespace RDB.UI.ImpExps
             }
         }
 
-        private void InsertColumns(List<string> sloupce_list) //vložení hodnot ze souboru
+        /// <summary>
+        /// Vložení hodnot ze souboru
+        /// </summary>
+        /// <param name="sloupce_list"></param>
+        private void InsertColumns(List<string> sloupce_list)
         {
             StreamReader file = new StreamReader(@FilePath, Encoding.UTF8);
 
-            if (!AllTables)
-            {
-                InsertIntoTable(file, TableName, sloupce_list);
-            }
-            else
-            {
-                /*
-                 *      Zde bude vložení všech tabulek naráz  
-                 */
-            }
+            InsertIntoTable(file, TableName, sloupce_list);
+
             MessageBox.Show("Hodnoty vloženy.");
             file.Close();
         }

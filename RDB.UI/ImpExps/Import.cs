@@ -1,7 +1,6 @@
 ﻿using RDB.Data.DAL;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using System.Data.SqlClient;
@@ -12,12 +11,6 @@ namespace RDB.UI.ImpExps
 {
     public class Import : ImpExpBase
     {
-        #region Fields
-
-        List<string> tables = new List<string>();
-
-        #endregion
-
         #region Constructors 
 
         public Import(DefaultContext defaultContext, ComboBox tables_cb, List<String> tableNames) : base(defaultContext, tables_cb, tableNames) { }
@@ -29,11 +22,9 @@ namespace RDB.UI.ImpExps
         public void OpenFile(RadioButton od_car_rad, RadioButton od_str_rad, RadioButton od_tab_rad, TextBox cesta_in_tb, Button insert_bt, ListView preview)
         {
             var fileContent = string.Empty;
-            //filePath = string.Empty;
-
+            
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                //openFileDialog.InitialDirectory = "c:\\";
                 openFileDialog.Filter = "Textové soubory (*.txt)|*.txt|csv soubory (*.csv)|*.csv|xsl soubory (*.xsl)|*.xsl|Všechny soubory (*.*)|*.*";
                 openFileDialog.Title = "Otevřít soubor s daty";
                 openFileDialog.FilterIndex = 2;
@@ -43,7 +34,6 @@ namespace RDB.UI.ImpExps
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    //Get the path of specified file
                     preview.Items.Clear();
                     OpenCSV(openFileDialog, preview);
                     cesta_in_tb.Text = FilePath;
@@ -54,7 +44,7 @@ namespace RDB.UI.ImpExps
 
         public void Insert()
         {
-            if (!String.IsNullOrEmpty(FilePath) && (AllTables || !String.IsNullOrEmpty(TableName)))
+            if (!String.IsNullOrEmpty(FilePath) && !String.IsNullOrEmpty(TableName))
             {
                 try
                 {
@@ -64,10 +54,6 @@ namespace RDB.UI.ImpExps
                 {
                     MessageBox.Show("Chyba:" + exp);
                 }
-            }
-            else if (AllTables && FilePath.Length > 0)
-            {
-
             }
         }
 
@@ -128,22 +114,16 @@ namespace RDB.UI.ImpExps
             }
         }
 
-        private void InsertColumns(List<string> sloupce_list) //vložení hodnot ze souboru
+        /// <summary>
+        /// Vložení hodnot ze souboru
+        /// </summary>
+        /// <param name="columns"></param>
+        private void InsertColumns(List<String> columns)
         {
-            System.IO.StreamReader file =
-            new System.IO.StreamReader(@FilePath, Encoding.Default);
+            StreamReader file = new StreamReader(@FilePath, Encoding.Default);
 
-            if (!AllTables)
-            {
-                InsertIntoTable(file, sloupce_list);
-            }
-            else
-            {
-                /*
-                 *      Zde bude vložení všech tabulek naráz  
-                 */
-                InsertIntoAll(file);
-            }
+            InsertIntoTable(file, columns);
+
             MessageBox.Show("Hodnoty vloženy.");
             file.Close();
         }
@@ -181,11 +161,6 @@ namespace RDB.UI.ImpExps
                 }
                 counter++;
             }
-        }
-
-        private void InsertIntoAll(StreamReader file)
-        {
-
         }
 
         #endregion

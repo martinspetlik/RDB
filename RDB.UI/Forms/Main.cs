@@ -34,6 +34,8 @@ namespace RDB.UI.Forms
             List<String> tableNames = defaultContext.GetScheme();
             export = new Export(defaultContext, tables_cb_e, tableNames);
             import = new Import(defaultContext, tables_cb, tableNames);
+
+            export_bt.Enabled = true;
         }
 
         #endregion
@@ -41,25 +43,6 @@ namespace RDB.UI.Forms
         #region Private methods
 
         #region Import events
-
-        /// <summary>
-        /// Vyběr jedné tabulky nebo v souboru jsou všechny
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void all_tables_ch_CheckedChanged(object sender, EventArgs e)
-        {
-            if (all_tables_ch.Checked)
-            {
-                tables_cb.Enabled = false;
-                import.AllTables = true;
-            }
-            else
-            {
-                tables_cb.Enabled = true;
-                import.AllTables = false;
-            }
-        }
 
         /// <summary>
         /// Otevření filedialogu pro výběr CSV
@@ -94,25 +77,6 @@ namespace RDB.UI.Forms
         private void preview_bt_Click(object sender, EventArgs e)   //Náhled dat z DB
         {
             export.ShowPreview(preview_e);
-        }
-
-        private void all_tables_ch_e_CheckedChanged(object sender, EventArgs e)
-        {
-            if (all_tables_ch_e.Checked)
-            {
-                tables_cb_e.Enabled = false;
-                export.AllTables = true;
-                export_bt.Enabled = true;
-            }
-            else
-            {
-                tables_cb_e.Enabled = true;
-                export.AllTables = false;
-                if (tables_cb_e.Text.Length > 0)
-                    export_bt.Enabled = true;
-                else
-                    export_bt.Enabled = false;
-            }
         }
 
         private void tables_cb_e_SelectedValueChanged(object sender, EventArgs e)

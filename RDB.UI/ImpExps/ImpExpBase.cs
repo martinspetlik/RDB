@@ -19,8 +19,6 @@ namespace RDB.UI.ImpExps
 
         public String FilePath { get; set; }
 
-        public Boolean AllTables { get; set; }
-
         public Char Separator { get; set; }
 
         #endregion

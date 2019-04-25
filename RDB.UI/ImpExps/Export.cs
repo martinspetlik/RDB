@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.IO;
 using RDB.Data.Extensions;
+using CsvHelper;
 
 namespace RDB.UI.ImpExps
 {
@@ -30,8 +31,6 @@ namespace RDB.UI.ImpExps
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
             saveFileDialog1.Filter = "CSV soubory (*.csv)|*.csv";
             saveFileDialog1.Title = "Uložit data z databáze";
-            
-            StreamWriter writer = null;
 
             if (saveFileDialog1.ShowDialog() == DialogResult.OK && saveFileDialog1.FileName != "")
             {
@@ -42,9 +41,7 @@ namespace RDB.UI.ImpExps
                  *  Zde bude write z db do souboru
                  *  Popřípadě v jiné metodě
                  */
-                writer = new StreamWriter(saveFileDialog1.Filter);
-                writer.Close();
-                System.Data.Entity.DbSet a = defaultContext.Contacts;
+                
             }
         }
 
@@ -79,7 +76,7 @@ namespace RDB.UI.ImpExps
                 List<string> sloupce_list = new List<string>();
                 try
                 {
-                    InsertColumns(defaultContext.GetTableColumns(TableName));    //volání vkládání
+                    DataFromTable();    //volání exportu podle zvolené tabulky
                 }
                 catch (SqlException exp)
                 {
@@ -101,6 +98,41 @@ namespace RDB.UI.ImpExps
             MessageBox.Show("Hodnoty vloženy.");
             file.Close();
         }
+        private void DataFromTable()
+        {
+            
+            switch(TableName.ToLower())
+            {
+                case "autobus": break;
+                case "jizda": break;
+                case "jizdenka": break;
+                case "klient": break;
+                case "kontakt": break;
+                case "lokalita": break;
+                case "mezizastavka": break;
+                case "ridic": break;
+                case "trasy": break;
+                case "typkontaktu": break;
+                case "znacka": break;
+                default: break;
+            }
+        }
+
+        private void AutobusExport()
+        {
+            System.Data.Entity.DbSet a = defaultContext.Buses;
+
+            using (var mem = new MemoryStream())
+            using (var writer = new StreamWriter(mem))
+            using (var csvWriter = new CsvWriter(writer))
+            {
+                csvWriter.Configuration.Delimiter = Separator + "";
+
+                
+            }
+            
+        }
+
 
         private void InsertIntoTable(StreamReader file, string tabulka, List<string> sloupce_list)
         {

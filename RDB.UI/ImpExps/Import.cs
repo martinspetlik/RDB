@@ -110,7 +110,7 @@ namespace RDB.UI.ImpExps
             }
             catch
             {
-                MessageBox.Show("SOubor nemohl být otevřen, může být otevřen v jiné aplikaci.");
+                MessageBox.Show("Soubor nemohl být otevřen, může být otevřen v jiné aplikaci.");
             }
         }
 

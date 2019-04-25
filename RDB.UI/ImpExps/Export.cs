@@ -6,76 +6,21 @@ using System.Text;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.IO;
+using RDB.Data.Extensions;
 
-
-namespace RDB.UI
+namespace RDB.UI.ImpExps
 {
-    public class Export
+    public class Export : ImpExpBase
     {
         #region Fields
 
-        Data data;
         List<string> tables = new List<string>();
-        private char oddelovac;
-        private bool all_tables;
-        private string filePath;
-        private string tabulka;
-
+        
         #endregion
 
         #region Constructors 
-        public Export(DefaultContext defaultContext, BindingSource bs, ComboBox tables_cb)
-        {
-            data = new Data(defaultContext, bs, tables_cb);
-        }
-        #endregion
 
-        #region Properties
-
-        public char Oddelovac
-        {
-            get
-            {
-                return oddelovac;
-            }
-            set
-            {
-                oddelovac = value;
-            }
-        }
-        public bool All_tables
-        {
-            get
-            {
-                return all_tables;
-            }
-            set
-            {
-                all_tables = value;
-            }
-        }
-        public string FilePath
-        {
-            get
-            {
-                return filePath;
-            }
-            set
-            {
-                filePath = value;
-            }
-        }
-        public string Tabulka
-        {
-            get
-            {
-                return tabulka;
-            }
-            set
-            {
-                tabulka = value;
-            }
-        }
+        public Export(DefaultContext defaultContext, ComboBox tables_cb, List<String> tableNames) : base(defaultContext, tables_cb, tableNames) { }
 
         #endregion
 
@@ -84,11 +29,9 @@ namespace RDB.UI
 
         public void ShowPreview(ListView preview)
         {
-            if (Tabulka.Length > 0 && !All_tables)
-            {
-                PreviewTable(data.GetColumns(Tabulka));
-            }
-            else if(All_tables)
+            if (!String.IsNullOrEmpty(TableName) && !AllTables)
+                PreviewTable(defaultContext.GetTableColumns(TableName));
+            else if (AllTables)
             {
                 /*
                  *  Podle struktury dat bude vypis nahledu
@@ -107,7 +50,7 @@ namespace RDB.UI
             if (saveFileDialog1.ShowDialog() == DialogResult.OK && saveFileDialog1.FileName != "")
             {
                 SetSeparator(od_car_rad, od_str_rad, od_tab_rad);
-               
+
                 ExportData();
                 /*
                  *  Zde bude write z db do souboru
@@ -115,7 +58,7 @@ namespace RDB.UI
                  */
                 writer = new StreamWriter(saveFileDialog1.Filter);
                 writer.Close();
-                System.Data.Entity.DbSet a = data.defaultContext.Contacts;
+                System.Data.Entity.DbSet a = defaultContext.Contacts;
             }
         }
 
@@ -125,8 +68,8 @@ namespace RDB.UI
 
         private void PreviewTable(List<string> sloupce_list)
         {
-            int counter = 0;
-            string line;
+            //int counter = 0;
+            //string line;
             string command = TableSelect(sloupce_list);
         }
 
@@ -139,19 +82,18 @@ namespace RDB.UI
                 if (i < sloupce_list.Count - 1)
                     command += ", ";
             }
-            command += " FROM " + Tabulka;
+            command += " FROM " + TableName;
             return command;
         }
 
         private void ExportData()
         {
-            if (filePath.Length > 0 && ((tabulka.Length > 0 && !all_tables) || all_tables))
+            if (!String.IsNullOrEmpty(FilePath) && (AllTables || !String.IsNullOrEmpty(TableName)))
             {
-                
                 List<string> sloupce_list = new List<string>();
-                try                                                
+                try
                 {
-                    InsertColumns(data.GetColumns(Tabulka));    //volání vkládání
+                    InsertColumns(defaultContext.GetTableColumns(TableName));    //volání vkládání
                 }
                 catch (SqlException exp)
                 {
@@ -162,12 +104,11 @@ namespace RDB.UI
 
         private void InsertColumns(List<string> sloupce_list) //vložení hodnot ze souboru
         {
-            System.IO.StreamReader file =
-            new System.IO.StreamReader(@FilePath, Encoding.Default);
+            StreamReader file = new StreamReader(@FilePath, Encoding.UTF8);
 
-            if (!all_tables)
+            if (!AllTables)
             {
-                InsertIntoTable(file, tabulka, sloupce_list);
+                InsertIntoTable(file, TableName, sloupce_list);
             }
             else
             {
@@ -187,9 +128,8 @@ namespace RDB.UI
             {
                 try
                 {
-
                     string command = "INSERT INTO " + tabulka + " (";
-                    string[] values = line.Split(oddelovac);
+                    string[] values = line.Split(Separator);
                     String[] columnRestrictions = new String[4];
                     columnRestrictions[2] = tabulka;
 
@@ -210,7 +150,8 @@ namespace RDB.UI
                             command += ", ";
                     }
                     command += ")";
-                    data.defaultContext.Database.ExecuteSqlCommand(command);
+
+                    defaultContext.Database.ExecuteSqlCommand(command);
 
                 }
                 catch (SqlException e)
@@ -220,18 +161,6 @@ namespace RDB.UI
                 counter++;
             }
         }
-
-        private void SetSeparator(RadioButton od_car_rad, RadioButton od_str_rad, RadioButton od_tab_rad)
-        {
-            if (od_car_rad.Checked)
-                Oddelovac = ',';
-            else if (od_str_rad.Checked)
-                Oddelovac = ';';
-            else if (od_tab_rad.Checked)
-                Oddelovac = '\t';
-        }
-
-        
 
         #endregion
     }

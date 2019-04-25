@@ -1,15 +1,10 @@
 ﻿using RDB.Data.DAL;
+using RDB.Data.Extensions;
+using RDB.UI.ImpExps;
+using RDB.UI.Watermarking;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Data.SqlClient;
-using System.IO;
 
 namespace RDB.UI.Forms
 {
@@ -18,8 +13,10 @@ namespace RDB.UI.Forms
         #region Fields
 
         private readonly DefaultContext defaultContext;
-        private Import imp;
-        private Export exp;
+
+        private readonly Import import;
+
+        private readonly Export export;
 
         #endregion
 
@@ -27,52 +24,67 @@ namespace RDB.UI.Forms
 
         public Main()
         {
-            defaultContext = new DefaultContext();
-            //defaultContext.Database.Connection.Open();
             InitializeComponent();
+
+            defaultContext = new DefaultContext();
 
             Watermark marker = new Watermark(defaultContext);
             marker.Watermarking();
 
-            insert_bt.Enabled = false;
-            export_bt.Enabled = false;
-            BindingSource bs = new BindingSource();
-            exp = new Export(defaultContext, bs, tables_cb_e);
-            imp = new Import(defaultContext, bs, tables_cb);
+            List<String> tableNames = defaultContext.GetScheme();
+            export = new Export(defaultContext, tables_cb_e, tableNames);
+            import = new Import(defaultContext, tables_cb, tableNames);
         }
 
         #endregion
 
+        #region Private methods
+
         #region Import events
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)   //Vyběr jedné tabulky nebo v souboru jsou všechny
+        /// <summary>
+        /// Vyběr jedné tabulky nebo v souboru jsou všechny
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void all_tables_ch_CheckedChanged(object sender, EventArgs e)
         {
             if (all_tables_ch.Checked)
             {
                 tables_cb.Enabled = false;
-                imp.All_tables = true;
+                import.AllTables = true;
             }
             else
             {
                 tables_cb.Enabled = true;
-                imp.All_tables = false;
+                import.AllTables = false;
             }
         }
 
-        private void soubor_in_bt_Click(object sender, EventArgs e)     //otevření filedialogu pro výběr CSV
+        /// <summary>
+        /// Otevření filedialogu pro výběr CSV
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void soubor_in_bt_Click(object sender, EventArgs e)
         {
-            imp.OpenFile(od_car_rad, od_str_rad, od_tab_rad, cesta_in_tb, insert_bt, preview);
-        }   
+            import.OpenFile(od_car_rad, od_str_rad, od_tab_rad, cesta_in_tb, insert_bt, preview);
+        }
 
-        private void insert_bt_Click(object sender, EventArgs e) //Vložení dat z CSV do DB
+        /// <summary>
+        /// Vložení dat z CSV do DB
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void insert_bt_Click(object sender, EventArgs e)
         {
-            imp.Insert();
+            import.Insert();
         }
 
         private void tables_cb_SelectedValueChanged(object sender, EventArgs e)
         {
-            if (imp != null)
-                imp.Tabulka = tables_cb.Text;
+            if (import != null)
+                import.TableName = tables_cb.Text;
         }
 
         #endregion
@@ -81,7 +93,7 @@ namespace RDB.UI.Forms
 
         private void preview_bt_Click(object sender, EventArgs e)   //Náhled dat z DB
         {
-            exp.ShowPreview(preview_e);
+            export.ShowPreview(preview_e);
         }
 
         private void all_tables_ch_e_CheckedChanged(object sender, EventArgs e)
@@ -89,13 +101,13 @@ namespace RDB.UI.Forms
             if (all_tables_ch_e.Checked)
             {
                 tables_cb_e.Enabled = false;
-                exp.All_tables = true;
+                export.AllTables = true;
                 export_bt.Enabled = true;
             }
             else
             {
                 tables_cb_e.Enabled = true;
-                exp.All_tables = false;
+                export.AllTables = false;
                 if (tables_cb_e.Text.Length > 0)
                     export_bt.Enabled = true;
                 else
@@ -105,16 +117,17 @@ namespace RDB.UI.Forms
 
         private void tables_cb_e_SelectedValueChanged(object sender, EventArgs e)
         {
-            if(exp != null)
-                exp.Tabulka = tables_cb_e.Text;
+            if(export != null)
+                export.TableName = tables_cb_e.Text;
         }
 
         private void export_bt_Click(object sender, EventArgs e)
         {
-            exp.SaveFile(od_car_rad_e, od_str_rad_e, od_tab_rad_e);
+            export.SaveFile(od_car_rad_e, od_str_rad_e, od_tab_rad_e);
         }
 
         #endregion
 
+        #endregion
     }
 }

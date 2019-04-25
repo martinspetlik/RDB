@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DAL\DefaultContext.cs" />
+    <Compile Include="Extensions\SchemeExtension.cs" />
     <Compile Include="Migrations\201903261953538_Init.cs" />
     <Compile Include="Migrations\201903261953538_Init.Designer.cs">
       <DependentUpon>201903261953538_Init.cs</DependentUpon>

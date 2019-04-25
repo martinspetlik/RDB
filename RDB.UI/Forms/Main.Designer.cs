@@ -126,10 +126,12 @@
             // od_car_rad
             // 
             this.od_car_rad.AutoSize = true;
+            this.od_car_rad.Checked = true;
             this.od_car_rad.Location = new System.Drawing.Point(3, 3);
             this.od_car_rad.Name = "od_car_rad";
             this.od_car_rad.Size = new System.Drawing.Size(53, 17);
             this.od_car_rad.TabIndex = 25;
+            this.od_car_rad.TabStop = true;
             this.od_car_rad.Text = "Čárka";
             this.od_car_rad.UseVisualStyleBackColor = true;
             // 
@@ -146,12 +148,10 @@
             // od_str_rad
             // 
             this.od_str_rad.AutoSize = true;
-            this.od_str_rad.Checked = true;
             this.od_str_rad.Location = new System.Drawing.Point(3, 26);
             this.od_str_rad.Name = "od_str_rad";
             this.od_str_rad.Size = new System.Drawing.Size(67, 17);
             this.od_str_rad.TabIndex = 26;
-            this.od_str_rad.TabStop = true;
             this.od_str_rad.Text = "Středník";
             this.od_str_rad.UseVisualStyleBackColor = true;
             // 
@@ -164,6 +164,7 @@
             this.all_tables_ch.TabIndex = 37;
             this.all_tables_ch.Text = "Všechny tabulky";
             this.all_tables_ch.UseVisualStyleBackColor = true;
+            this.all_tables_ch.CheckedChanged += new System.EventHandler(this.all_tables_ch_CheckedChanged);
             // 
             // label1
             // 
@@ -181,15 +182,18 @@
             this.tables_cb.Name = "tables_cb";
             this.tables_cb.Size = new System.Drawing.Size(130, 21);
             this.tables_cb.TabIndex = 35;
+            this.tables_cb.SelectedValueChanged += new System.EventHandler(this.tables_cb_SelectedValueChanged);
             // 
             // insert_bt
             // 
+            this.insert_bt.Enabled = false;
             this.insert_bt.Location = new System.Drawing.Point(472, 260);
             this.insert_bt.Name = "insert_bt";
             this.insert_bt.Size = new System.Drawing.Size(83, 44);
             this.insert_bt.TabIndex = 34;
             this.insert_bt.Text = "Import";
             this.insert_bt.UseVisualStyleBackColor = true;
+            this.insert_bt.Click += new System.EventHandler(this.insert_bt_Click);
             // 
             // preview
             // 
@@ -207,6 +211,7 @@
             this.soubor_in_bt.TabIndex = 32;
             this.soubor_in_bt.Text = "Vybrat soubor";
             this.soubor_in_bt.UseVisualStyleBackColor = true;
+            this.soubor_in_bt.Click += new System.EventHandler(this.soubor_in_bt_Click);
             // 
             // cesta_in_tb
             // 
@@ -282,10 +287,12 @@
             // od_car_rad_e
             // 
             this.od_car_rad_e.AutoSize = true;
+            this.od_car_rad_e.Checked = true;
             this.od_car_rad_e.Location = new System.Drawing.Point(3, 3);
             this.od_car_rad_e.Name = "od_car_rad_e";
             this.od_car_rad_e.Size = new System.Drawing.Size(53, 17);
             this.od_car_rad_e.TabIndex = 25;
+            this.od_car_rad_e.TabStop = true;
             this.od_car_rad_e.Text = "Čárka";
             this.od_car_rad_e.UseVisualStyleBackColor = true;
             // 
@@ -302,12 +309,10 @@
             // od_str_rad_e
             // 
             this.od_str_rad_e.AutoSize = true;
-            this.od_str_rad_e.Checked = true;
             this.od_str_rad_e.Location = new System.Drawing.Point(3, 26);
             this.od_str_rad_e.Name = "od_str_rad_e";
             this.od_str_rad_e.Size = new System.Drawing.Size(67, 17);
             this.od_str_rad_e.TabIndex = 26;
-            this.od_str_rad_e.TabStop = true;
             this.od_str_rad_e.Text = "Středník";
             this.od_str_rad_e.UseVisualStyleBackColor = true;
             // 
@@ -342,6 +347,7 @@
             // 
             // export_bt
             // 
+            this.export_bt.Enabled = false;
             this.export_bt.Location = new System.Drawing.Point(472, 260);
             this.export_bt.Name = "export_bt";
             this.export_bt.Size = new System.Drawing.Size(83, 44);

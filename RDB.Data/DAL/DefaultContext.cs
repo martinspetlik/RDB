@@ -36,7 +36,10 @@ namespace RDB.Data.DAL
 
         #region Constructors
 
-        public DefaultContext() : base("DefaultContext") { }
+        public DefaultContext() : base("DefaultContext")
+        {
+            Database.Connection.Open();
+        }
 
         #endregion
 

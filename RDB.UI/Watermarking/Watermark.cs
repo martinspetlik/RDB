@@ -6,7 +6,8 @@ using System.IO;
 using RDB.Data.Models;
 using System.Collections;
 using System.Security.Cryptography;
-namespace RDB.UI
+
+namespace RDB.UI.Watermarking
 {
     // http://iranarze.ir/wp-content/uploads/2017/08/7338-English-IranArze.pdf
     public class Watermark
@@ -36,7 +37,7 @@ namespace RDB.UI
 
         public BitArray[] ProcessImage()
         { 
-            var image_bits = this.LoadImage(Image.FromFile("/home/martin/Documents/RDB/RDB.UI/random_image.jpg"));
+            var image_bits = this.LoadImage(Image.FromFile("Watermarking/random_image.jpg"));
             BitArray bits = new BitArray(image_bits);
 
             // Should be from image variable

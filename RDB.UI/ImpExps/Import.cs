@@ -6,77 +6,21 @@ using System.Text;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.IO;
+using RDB.Data.Extensions;
 
-namespace RDB.UI
+namespace RDB.UI.ImpExps
 {
-    class Import
+    public class Import : ImpExpBase
     {
         #region Fields
 
-        Data data;
         List<string> tables = new List<string>();
-        private char oddelovac;
-        private bool all_tables;
-        private string filePath;
-        private string tabulka;
 
         #endregion
 
         #region Constructors 
 
-        public Import(DefaultContext defaultContext, BindingSource bs, ComboBox tables_cb)
-        {
-            data = new Data(defaultContext, bs, tables_cb);
-        }
-
-        #endregion
-
-        #region Properties
-
-        public char Oddelovac
-        {
-            get
-            {
-                return oddelovac;
-            }
-            set
-            {
-                oddelovac = value;
-            }
-        }
-        public bool All_tables
-        {
-            get
-            {
-                return all_tables;
-            }
-            set
-            {
-                all_tables = value;
-            }
-        }
-        public string FilePath
-        {
-            get
-            {
-                return filePath;
-            }
-            set
-            {
-                filePath = value;
-            }
-        }
-        public string Tabulka
-        {
-            get
-            {
-                return tabulka;
-            }
-            set
-            {
-                tabulka = value;
-            }
-        }
+        public Import(DefaultContext defaultContext, ComboBox tables_cb, List<String> tableNames) : base(defaultContext, tables_cb, tableNames) { }
 
         #endregion
 
@@ -110,18 +54,18 @@ namespace RDB.UI
 
         public void Insert()
         {
-            if (filePath.Length > 0 && ((tabulka.Length > 0 && !all_tables) || all_tables))
+            if (!String.IsNullOrEmpty(FilePath) && (AllTables || !String.IsNullOrEmpty(TableName)))
             {
-                try                                                 
+                try
                 {
-                    InsertColumns(data.GetColumns(Tabulka));    //volání vkládání
+                    InsertColumns(defaultContext.GetTableColumns(TableName));    //volání vkládání
                 }
                 catch (SqlException exp)
                 {
                     MessageBox.Show("Chyba:" + exp);
                 }
             }
-            else if(all_tables && filePath.Length > 0)
+            else if (AllTables && FilePath.Length > 0)
             {
 
             }
@@ -133,14 +77,13 @@ namespace RDB.UI
 
         private void OpenCSV(OpenFileDialog openFileDialog, ListView preview)
         {
-            filePath = openFileDialog.FileName;
+            FilePath = openFileDialog.FileName;
 
             //Read the contents of the file into a stream
-            //var fileStream;
             try
             {
-                var fileStream = openFileDialog.OpenFile();
-                using (StreamReader reader = new StreamReader(fileStream, Encoding.Default))
+                Stream fileStream = openFileDialog.OpenFile();
+                using (StreamReader reader = new StreamReader(fileStream, Encoding.UTF8))
                 {
                     bool prvni = true;
                     //fileContent = reader.ReadToEnd();
@@ -153,7 +96,7 @@ namespace RDB.UI
                             var line = reader.ReadLine();
                             if (line != null)
                             {
-                                string[] values = line.Split(oddelovac);
+                                string[] values = line.Split(Separator);
                                 string[] arr = new string[values.Length];
                                 //var items = preview.Items;
                                 //ListViewItem lvi1 = new ListViewItem();
@@ -190,7 +133,7 @@ namespace RDB.UI
             System.IO.StreamReader file =
             new System.IO.StreamReader(@FilePath, Encoding.Default);
 
-            if (!all_tables)
+            if (!AllTables)
             {
                 InsertIntoTable(file, sloupce_list);
             }
@@ -205,7 +148,7 @@ namespace RDB.UI
             file.Close();
         }
 
-        private void InsertIntoTable(StreamReader file, List<string> sloupce_list)
+        private void InsertIntoTable(StreamReader file, List<string> columns)
         {
             int counter = 0;
             string line;
@@ -213,31 +156,24 @@ namespace RDB.UI
             {
                 try
                 {
+                    string command = "INSERT INTO " + TableName + " (";
+                    string[] values = line.Split(Separator);
 
-                    string command = "INSERT INTO " + tabulka + " (";
-                    string[] values = line.Split(oddelovac);
-                    String[] columnRestrictions = new String[4];
-                    columnRestrictions[2] = tabulka;
-
-                    for (int i = 0; i < sloupce_list.Count; i++)
-                    {
-                        command += sloupce_list[i];
-                        if (i < sloupce_list.Count - 1)
-                            command += ", ";
-                    }
+                    command += String.Join(", ", columns);
                     command += ") VALUES (";
-                    for (int i = 0; i < sloupce_list.Count; i++)
+                    for (int i = 0; i < columns.Count; i++)
                     {
                         if (i < values.Length)
-                            command += values[i];
+                            command += "'" + values[i] + "'";
                         else
                             command += DBNull.Value;
+
                         if (i < values.Length - 1)
                             command += ", ";
                     }
                     command += ")";
-                    data.defaultContext.Database.ExecuteSqlCommand(command);
 
+                    defaultContext.Database.ExecuteSqlCommand(command);
                 }
                 catch (SqlException e)
                 {
@@ -250,16 +186,6 @@ namespace RDB.UI
         private void InsertIntoAll(StreamReader file)
         {
 
-        }
-
-        private void SetSeparator(RadioButton od_car_rad, RadioButton od_str_rad, RadioButton od_tab_rad)
-        {
-            if (od_car_rad.Checked)
-                Oddelovac = ',';
-            else if (od_str_rad.Checked)
-                Oddelovac = ';';
-            else if (od_tab_rad.Checked)
-                Oddelovac = '\t';
         }
 
         #endregion

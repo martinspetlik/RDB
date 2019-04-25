@@ -32,8 +32,8 @@ namespace RDB.UI.Forms
             marker.Watermarking();
 
             List<String> tableNames = defaultContext.GetScheme();
-            export = new Export(defaultContext, tables_cb_e, tableNames);
             import = new Import(defaultContext, tables_cb, tableNames);
+            export = new Export(defaultContext, tables_cb_e, tableNames);
 
             export_bt.Enabled = true;
         }
@@ -66,8 +66,7 @@ namespace RDB.UI.Forms
 
         private void tables_cb_SelectedValueChanged(object sender, EventArgs e)
         {
-            if (import != null)
-                import.TableName = tables_cb.Text;
+            import.TableName = tables_cb.Text;
         }
 
         #endregion
@@ -81,7 +80,7 @@ namespace RDB.UI.Forms
 
         private void tables_cb_e_SelectedValueChanged(object sender, EventArgs e)
         {
-            if(export != null)
+            if (export != null)
                 export.TableName = tables_cb_e.Text;
         }
 

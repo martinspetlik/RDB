@@ -3,14 +3,21 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
-using System.Data.SqlClient;
 using System.IO;
 using RDB.Data.Extensions;
+using MySql.Data.MySqlClient;
+using System.Linq;
 
 namespace RDB.UI.ImpExps
 {
     public class Import : ImpExpBase
     {
+        #region Constants
+
+        private Int32 BATCH_SIZE = 500;
+
+        #endregion
+
         #region Constructors 
 
         public Import(DefaultContext defaultContext, ComboBox tables_cb, List<String> tableNames) : base(defaultContext, tables_cb, tableNames) { }
@@ -22,10 +29,10 @@ namespace RDB.UI.ImpExps
         public void OpenFile(RadioButton od_car_rad, RadioButton od_str_rad, RadioButton od_tab_rad, TextBox cesta_in_tb, Button insert_bt, ListView preview)
         {
             var fileContent = string.Empty;
-            
+
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Filter = "Textové soubory (*.txt)|*.txt|csv soubory (*.csv)|*.csv|xsl soubory (*.xsl)|*.xsl|Všechny soubory (*.*)|*.*";
+                openFileDialog.Filter = "CSV soubory (*.csv)|*.csv";
                 openFileDialog.Title = "Otevřít soubor s daty";
                 openFileDialog.FilterIndex = 2;
                 openFileDialog.RestoreDirectory = true;
@@ -50,7 +57,7 @@ namespace RDB.UI.ImpExps
                 {
                     InsertColumns(defaultContext.GetTableColumns(TableName));    //volání vkládání
                 }
-                catch (SqlException exp)
+                catch (MySqlException exp)
                 {
                     MessageBox.Show("Chyba:" + exp);
                 }
@@ -68,40 +75,34 @@ namespace RDB.UI.ImpExps
             //Read the contents of the file into a stream
             try
             {
-                Stream fileStream = openFileDialog.OpenFile();
-                using (StreamReader reader = new StreamReader(fileStream, Encoding.UTF8))
+                using (StreamReader reader = new StreamReader(openFileDialog.OpenFile(), Encoding.UTF8))
                 {
-                    bool prvni = true;
-                    //fileContent = reader.ReadToEnd();
                     preview.View = View.Details;
+                    preview.Columns.Clear();
 
                     for (int i = 0; i < 10; i++)
                     {
                         try
                         {
-                            var line = reader.ReadLine();
-                            if (line != null)
+                            String line = reader.ReadLine();
+                            if (!String.IsNullOrEmpty(line))
                             {
-                                string[] values = line.Split(Separator);
-                                string[] arr = new string[values.Length];
-                                //var items = preview.Items;
-                                //ListViewItem lvi1 = new ListViewItem();
-                                ListViewItem item1 = new ListViewItem();
-                                if (prvni)
+                                String[] values = line.Split(Separator);
+
+                                if (i == 0)
                                 {
                                     for (int j = 0; j < values.Length; j++)
                                     {
-                                        preview.Columns.Add("Sloupec " + j);
-                                        prvni = false;
+                                        preview.Columns.Add("Sloupec " + (j + 1));
                                     }
                                 }
-                                preview.Items.Add(new ListViewItem(values));
-                                //preview.Items.Add(values);
 
+                                preview.Items.Add(new ListViewItem(values));
                             }
+                            else
+                                break;
                         }
                         catch { }
-
                     }
 
                     preview.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -110,7 +111,7 @@ namespace RDB.UI.ImpExps
             }
             catch
             {
-                MessageBox.Show("SOubor nemohl být otevřen, může být otevřen v jiné aplikaci.");
+                MessageBox.Show("Soubor nemohl být otevřen, může být otevřen v jiné aplikaci.");
             }
         }
 
@@ -120,47 +121,43 @@ namespace RDB.UI.ImpExps
         /// <param name="columns"></param>
         private void InsertColumns(List<String> columns)
         {
-            StreamReader file = new StreamReader(@FilePath, Encoding.Default);
+            try
+            {
+                Int32 count = InsertIntoTable(File.ReadAllLines(FilePath, Encoding.UTF8), columns);
 
-            InsertIntoTable(file, columns);
-
-            MessageBox.Show("Hodnoty vloženy.");
-            file.Close();
+                MessageBox.Show($"Úspěšně vloženo {count} záznamů...");
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Data se nepodařilo naimportovat...");
+            }
         }
 
-        private void InsertIntoTable(StreamReader file, List<string> columns)
+        private Int32 InsertIntoTable(String[] rows, List<String> columns)
         {
-            int counter = 0;
-            string line;
-            while ((line = file.ReadLine()) != null)
+            Int32 batchCount = rows.Length / BATCH_SIZE;
+            for (Int32 i = 0; i < batchCount; i++)
             {
-                try
+                String command = GetCommandHeader(columns);
+                IEnumerable<String> batchRows = rows.Skip(i * BATCH_SIZE).Take(BATCH_SIZE);
+                foreach (String row in batchRows)
                 {
-                    string command = "INSERT INTO " + TableName + " (";
-                    string[] values = line.Split(Separator);
-
-                    command += String.Join(", ", columns);
-                    command += ") VALUES (";
-                    for (int i = 0; i < columns.Count; i++)
-                    {
-                        if (i < values.Length)
-                            command += "'" + values[i] + "'";
-                        else
-                            command += DBNull.Value;
-
-                        if (i < values.Length - 1)
-                            command += ", ";
-                    }
-                    command += ")";
-
-                    defaultContext.Database.ExecuteSqlCommand(command);
+                    command += "(" + String.Join(", ", row.Split(Separator).Select(item => "'" + item + "'")) + "), ";
                 }
-                catch (SqlException e)
-                {
-                    MessageBox.Show("Chyba: " + e);
-                }
-                counter++;
+
+                defaultContext.Database.ExecuteSqlCommand(command.Substring(0, command.Length - 2));
             }
+
+            return rows.Length;
+        }
+
+        private String GetCommandHeader(List<String> columns)
+        {
+            String command = "INSERT INTO " + TableName + " (";
+            command += String.Join(", ", columns);
+            command += ") VALUES ";
+
+            return command;
         }
 
         #endregion

@@ -30,6 +30,8 @@ namespace RDB.UI.ImpExps
             this.defaultContext = defaultContext;
 
             comboBox.DataSource = tableNames;
+
+            TableName = comboBox.Text;
         }
 
         #endregion

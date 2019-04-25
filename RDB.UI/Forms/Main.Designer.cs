@@ -191,7 +191,7 @@
             // 
             // soubor_in_bt
             // 
-            this.soubor_in_bt.Location = new System.Drawing.Point(483, 10);
+            this.soubor_in_bt.Location = new System.Drawing.Point(483, 11);
             this.soubor_in_bt.Name = "soubor_in_bt";
             this.soubor_in_bt.Size = new System.Drawing.Size(83, 22);
             this.soubor_in_bt.TabIndex = 32;

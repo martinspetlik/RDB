@@ -7,11 +7,16 @@ using System.IO;
 using RDB.Data.Extensions;
 using MySql.Data.MySqlClient;
 using System.Linq;
+using Ionic.Zip;
 
 namespace RDB.UI.ImpExps
 {
     public class Import : ImpExpBase
     {
+        #region
+        String baseDirectory = "/temp_zip";
+        bool zip = false;
+        #endregion
         #region Constants
 
         private Int32 BATCH_SIZE = 500;
@@ -25,42 +30,143 @@ namespace RDB.UI.ImpExps
         #endregion
 
         #region Public methods
-
-        public void OpenFile(RadioButton od_car_rad, RadioButton od_str_rad, RadioButton od_tab_rad, TextBox cesta_in_tb, Button insert_bt, ListView preview)
+        
+        public void OpenFile(RadioButton od_car_rad, RadioButton od_str_rad, RadioButton od_tab_rad, TextBox cesta_in_tb, Button insert_bt, ListView preview, CheckBox zip_ch)
         {
+            zip = false;
             var fileContent = string.Empty;
-
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            SetSeparator(od_car_rad, od_str_rad, od_tab_rad);
+            if (!zip_ch.Checked)
             {
-                openFileDialog.Filter = "CSV soubory (*.csv)|*.csv";
-                openFileDialog.Title = "Otevřít soubor s daty";
-                openFileDialog.FilterIndex = 2;
-                openFileDialog.RestoreDirectory = true;
-
-                SetSeparator(od_car_rad, od_str_rad, od_tab_rad);
-
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
                 {
-                    preview.Items.Clear();
-                    OpenCSV(openFileDialog, preview);
-                    cesta_in_tb.Text = FilePath;
-                    insert_bt.Enabled = true;
+                    openFileDialog.Filter = "CSV soubory (*.csv)|*.csv";
+                    openFileDialog.Title = "Otevřít soubor s daty";
+                    openFileDialog.FilterIndex = 2;
+                    openFileDialog.RestoreDirectory = true;
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        preview.Items.Clear();
+                        OpenCSV(openFileDialog, preview);
+                        cesta_in_tb.Text = FilePath;
+                        insert_bt.Enabled = true;
+                    }
+                }
+            }
+            else
+            {
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    openFileDialog.Filter = "ZIP soubory (*.zip)|*.zip";
+                    openFileDialog.Title = "Otevřít soubor se všemi tabulkami";
+                    openFileDialog.FilterIndex = 2;
+                    openFileDialog.RestoreDirectory = true;
+
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        cesta_in_tb.Text = openFileDialog.FileName;
+                        DirectoryInfo di = Directory.CreateDirectory(baseDirectory);
+                        using (ZipFile zip = ZipFile.Read(openFileDialog.FileName))
+                        {
+                            string[] files = Directory.GetFiles(baseDirectory);
+                            foreach (string file in files)
+                            {
+                                File.Delete(file);
+                            }
+                            try
+                            {
+                                ZipEntry e = zip["znacka.csv"];
+                                e.Extract(baseDirectory);
+                                e = zip["autobus.csv"];
+                                e.Extract(baseDirectory);
+                                e = zip["typkontaktu.csv"];
+                                e.Extract(baseDirectory);
+                                e = zip["ridic.csv"];
+                                e.Extract(baseDirectory);
+                                e = zip["lokalita.csv"];
+                                e.Extract(baseDirectory);
+                                e = zip["kontakt.csv"];
+                                e.Extract(baseDirectory);
+                                e = zip["jizdenka.csv"];
+                                e.Extract(baseDirectory);
+                                e = zip["klient.csv"];
+                                e.Extract(baseDirectory);
+                                e = zip["trasy.csv"];
+                                e.Extract(baseDirectory);
+                                e = zip["jizda.csv"];
+                                e.Extract(baseDirectory);
+                            }
+                            catch (ZipException e)
+                            {
+                                MessageBox.Show("Chyba: " + e);
+                            }
+                        }
+                        preview.Items.Clear();
+                        insert_bt.Enabled = true;
+                        zip = true;
+                    }
                 }
             }
         }
 
         public void Insert()
         {
-            if (!String.IsNullOrEmpty(FilePath) && !String.IsNullOrEmpty(TableName))
+            if (!zip)
             {
-                try
+                if (!String.IsNullOrEmpty(FilePath) && !String.IsNullOrEmpty(TableName))
                 {
-                    InsertColumns(defaultContext.GetTableColumns(TableName));    //volání vkládání
+                    try
+                    {
+                        InsertColumns(defaultContext.GetTableColumns(TableName));    //volání vkládání
+                    }
+                    catch (MySqlException exp)
+                    {
+                        MessageBox.Show("Chyba:" + exp);
+                    }
                 }
-                catch (MySqlException exp)
-                {
-                    MessageBox.Show("Chyba:" + exp);
-                }
+            }
+            else
+            {
+                TableName = "znacka";
+                FilePath = baseDirectory + "/" + TableName + ".csv";
+                InsertColumns(defaultContext.GetTableColumns(TableName));
+
+                TableName = "autobus";
+                FilePath = baseDirectory + "/" + TableName + ".csv";
+                InsertColumns(defaultContext.GetTableColumns(TableName));
+
+                TableName = "lokalita";
+                FilePath = baseDirectory + "/" + TableName + ".csv";
+                InsertColumns(defaultContext.GetTableColumns(TableName));
+
+                TableName = "typkontaktu";
+                FilePath = baseDirectory + "/" + TableName + ".csv";
+                InsertColumns(defaultContext.GetTableColumns(TableName));
+
+                TableName = "ridic";
+                FilePath = baseDirectory + "/" + TableName + ".csv";
+                InsertColumns(defaultContext.GetTableColumns(TableName));
+
+                TableName = "kontakt";
+                FilePath = baseDirectory + "/" + TableName + ".csv";
+                InsertColumns(defaultContext.GetTableColumns(TableName));
+
+                TableName = "klient";
+                FilePath = baseDirectory + "/" + TableName + ".csv";
+                InsertColumns(defaultContext.GetTableColumns(TableName));
+
+                TableName = "jizdenka";
+                FilePath = baseDirectory + "/" + TableName + ".csv";
+                InsertColumns(defaultContext.GetTableColumns(TableName));
+
+                TableName = "trasy";
+                FilePath = baseDirectory + "/" + TableName + ".csv";
+                InsertColumns(defaultContext.GetTableColumns(TableName));
+
+                TableName = "jizda";
+                FilePath = baseDirectory + "/" + TableName + ".csv";
+                InsertColumns(defaultContext.GetTableColumns(TableName));
+
             }
         }
 
@@ -135,9 +241,7 @@ namespace RDB.UI.ImpExps
 
         private Int32 InsertIntoTable(String[] rows, List<String> columns)
         {
-            Int32 batchCount = rows.Length;
-           // if (rows.Length > 500)
-            //    batchCount = rows.Length / BATCH_SIZE;
+            Double batchCount = Math.Ceiling(Convert.ToDouble(rows.Length / BATCH_SIZE));
             for (Int32 i = 0; i < batchCount; i++)
             {
                 String command = GetCommandHeader(columns);

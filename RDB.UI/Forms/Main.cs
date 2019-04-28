@@ -51,7 +51,7 @@ namespace RDB.UI.Forms
         /// <param name="e"></param>
         private void soubor_in_bt_Click(object sender, EventArgs e)
         {
-            import.OpenFile(od_car_rad, od_str_rad, od_tab_rad, cesta_in_tb, insert_bt, preview);
+            import.OpenFile(od_car_rad, od_str_rad, od_tab_rad, cesta_in_tb, insert_bt, preview, zip_ch);
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace RDB.UI.Forms
         private void tables_cb_SelectedValueChanged(object sender, EventArgs e)
         {
             if(import != null)
-            import.TableName = tables_cb.Text;
+                import.TableName = tables_cb.Text;
         }
 
         #endregion
@@ -90,8 +90,14 @@ namespace RDB.UI.Forms
             export.SaveFile(od_car_rad_e, od_str_rad_e, od_tab_rad_e);
         }
 
+        private void zip_ch_CheckedChanged(object sender, EventArgs e)
+        {
+            if (zip_ch.Checked)
+                tables_cb.Enabled = false;
+            else
+                tables_cb.Enabled = true;
+        }
         #endregion
-
         #endregion
     }
 }

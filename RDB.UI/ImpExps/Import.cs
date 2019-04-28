@@ -148,6 +148,10 @@ namespace RDB.UI.ImpExps
                 defaultContext.Database.ExecuteSqlCommand(command.Substring(0, command.Length - 2));
             }
 
+            //defaultContext.Locations.Add(new Data.Models.Location { Name = "Bystrička" });
+            //defaultContext.Locations.Add(new Data.Models.Location { Name = "Bystřička" });
+            //defaultContext.SaveChanges();
+
             return rows.Length;
         }
 

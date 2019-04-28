@@ -7,6 +7,8 @@ using System.Data.SqlClient;
 using System.IO;
 using RDB.Data.Extensions;
 using CsvHelper;
+using RDB.Data.Models;
+using System.Linq;
 
 namespace RDB.UI.ImpExps
 {
@@ -34,14 +36,10 @@ namespace RDB.UI.ImpExps
 
             if (saveFileDialog1.ShowDialog() == DialogResult.OK && saveFileDialog1.FileName != "")
             {
+                FilePath = saveFileDialog1.FileName;
                 SetSeparator(od_car_rad, od_str_rad, od_tab_rad);
 
                 ExportData();
-                /*
-                 *  Zde bude write z db do souboru
-                 *  Popřípadě v jiné metodě
-                 */
-                
             }
         }
 
@@ -89,49 +87,191 @@ namespace RDB.UI.ImpExps
         /// Vložení hodnot ze souboru
         /// </summary>
         /// <param name="sloupce_list"></param>
-        private void InsertColumns(List<string> sloupce_list)
-        {
-            StreamReader file = new StreamReader(@FilePath, Encoding.UTF8);
-
-            InsertIntoTable(file, TableName, sloupce_list);
-
-            MessageBox.Show("Hodnoty vloženy.");
-            file.Close();
-        }
         private void DataFromTable()
         {
             
             switch(TableName.ToLower())
             {
-                case "autobus": break;
-                case "jizda": break;
-                case "jizdenka": break;
-                case "klient": break;
-                case "kontakt": break;
-                case "lokalita": break;
-                case "mezizastavka": break;
-                case "ridic": break;
-                case "trasy": break;
-                case "typkontaktu": break;
-                case "znacka": break;
+                case "autobus": AutobusExport();  break;
+                case "jizda": JizdaExport(); break;
+                case "jizdenka": JizdenkaExport(); break;
+                case "klient": KlientExport(); break;
+                case "kontakt": KontaktExport();  break;
+                case "lokalita": LokalitaExport(); break;
+                case "mezizastavka": MezizastavkaExport(); break;
+                case "ridic": RidicExport(); break;
+                case "trasy": TrasyExport(); break;
+                case "typkontaktu": TypKontaktuExport(); break;
+                case "znacka": ZnackaExport(); break;
                 default: break;
             }
         }
 
         private void AutobusExport()
         {
-            System.Data.Entity.DbSet a = defaultContext.Buses;
-
+            List<Bus> buses = defaultContext.Buses.AsNoTracking().ToList();
             using (var mem = new MemoryStream())
-            using (var writer = new StreamWriter(mem))
+            using (var writer = new StreamWriter(FilePath))
             using (var csvWriter = new CsvWriter(writer))
             {
                 csvWriter.Configuration.Delimiter = Separator + "";
-
-                
+                csvWriter.Configuration.HasHeaderRecord = false;
+                csvWriter.Configuration.AutoMap<Bus>();
+                csvWriter.WriteRecords(buses);
+                writer.Flush();
             }
-            
         }
+
+        private void JizdaExport()
+        {
+            List<Drive> driv = defaultContext.Drives.AsNoTracking().ToList();
+            using (var mem = new MemoryStream())
+            using (var writer = new StreamWriter(FilePath))
+            using (var csvWriter = new CsvWriter(writer))
+            {
+                csvWriter.Configuration.Delimiter = Separator + "";
+                csvWriter.Configuration.HasHeaderRecord = false;
+                csvWriter.Configuration.AutoMap<Drive>();
+                csvWriter.WriteRecords(driv);
+                writer.Flush();
+            }
+        }
+
+        private void JizdenkaExport()
+        {
+            List<Ticket> tic = defaultContext.Tickets.AsNoTracking().ToList();
+            using (var mem = new MemoryStream())
+            using (var writer = new StreamWriter(FilePath))
+            using (var csvWriter = new CsvWriter(writer))
+            {
+                csvWriter.Configuration.Delimiter = Separator + "";
+                csvWriter.Configuration.HasHeaderRecord = false;
+                csvWriter.Configuration.AutoMap<Ticket>();
+                csvWriter.WriteRecords(tic);
+                writer.Flush();
+            }
+        }
+
+        private void KlientExport()
+        {
+            List<Client> cli = defaultContext.Clients.AsNoTracking().ToList();
+            using (var mem = new MemoryStream())
+            using (var writer = new StreamWriter(FilePath))
+            using (var csvWriter = new CsvWriter(writer))
+            {
+                csvWriter.Configuration.Delimiter = Separator + "";
+                csvWriter.Configuration.HasHeaderRecord = false;
+                csvWriter.Configuration.AutoMap<Client>();
+                csvWriter.WriteRecords(cli);
+                writer.Flush();
+            }
+        }
+
+        private void KontaktExport()
+        {
+            List<Contact> cont = defaultContext.Contacts.AsNoTracking().ToList();
+            using (var mem = new MemoryStream())
+            using (var writer = new StreamWriter(FilePath))
+            using (var csvWriter = new CsvWriter(writer))
+            {
+                csvWriter.Configuration.Delimiter = Separator + "";
+                csvWriter.Configuration.HasHeaderRecord = false;
+                csvWriter.Configuration.AutoMap<Contact>();
+                csvWriter.WriteRecords(cont);
+                writer.Flush();
+            }
+        }
+
+        private void LokalitaExport()
+        {
+            List<Location> loca = defaultContext.Locations.AsNoTracking().ToList();
+            using (var mem = new MemoryStream())
+            using (var writer = new StreamWriter(FilePath))
+            using (var csvWriter = new CsvWriter(writer))
+            {
+                csvWriter.Configuration.Delimiter = Separator + "";
+                csvWriter.Configuration.HasHeaderRecord = false;
+                csvWriter.Configuration.AutoMap<Location>();
+                csvWriter.WriteRecords(loca);
+                writer.Flush();
+            }
+        }
+
+        private void MezizastavkaExport()
+        {
+            List<Station> stat = defaultContext.Stations.AsNoTracking().ToList();
+            using (var mem = new MemoryStream())
+            using (var writer = new StreamWriter(FilePath))
+            using (var csvWriter = new CsvWriter(writer))
+            {
+                csvWriter.Configuration.Delimiter = Separator + "";
+                csvWriter.Configuration.HasHeaderRecord = false;
+                csvWriter.Configuration.AutoMap<Station>();
+                csvWriter.WriteRecords(stat);
+                writer.Flush();
+            }
+        }
+
+        private void RidicExport()
+        {
+            List<Driver> driver = defaultContext.Drivers.AsNoTracking().ToList();
+            using (var mem = new MemoryStream())
+            using (var writer = new StreamWriter(FilePath))
+            using (var csvWriter = new CsvWriter(writer))
+            {
+                csvWriter.Configuration.Delimiter = Separator + "";
+                csvWriter.Configuration.HasHeaderRecord = false;
+                csvWriter.Configuration.AutoMap<Driver>();
+                csvWriter.WriteRecords(driver);
+                writer.Flush();
+            }
+        }
+
+        private void TrasyExport()
+        {
+            List<Route> routes = defaultContext.Routes.AsNoTracking().ToList();
+            using (var mem = new MemoryStream())
+            using (var writer = new StreamWriter(FilePath))
+            using (var csvWriter = new CsvWriter(writer))
+            {
+                csvWriter.Configuration.Delimiter = Separator + "";
+                csvWriter.Configuration.HasHeaderRecord = false;
+                csvWriter.Configuration.AutoMap<Route>();
+                csvWriter.WriteRecords(routes);
+                writer.Flush();
+            }
+        }
+
+        private void TypKontaktuExport()
+        {
+            List<ContactType> types = defaultContext.ContactTypes.AsNoTracking().ToList();
+            using (var mem = new MemoryStream())
+            using (var writer = new StreamWriter(FilePath))
+            using (var csvWriter = new CsvWriter(writer))
+            {
+                csvWriter.Configuration.Delimiter = Separator + "";
+                csvWriter.Configuration.HasHeaderRecord = false;
+                csvWriter.Configuration.AutoMap<ContactType>();
+                csvWriter.WriteRecords(types);
+                writer.Flush();
+            }
+        }
+
+        private void ZnackaExport()
+        {
+            List<Model> model = defaultContext.Models.AsNoTracking().ToList();
+            using (var mem = new MemoryStream())
+            using (var writer = new StreamWriter(FilePath))
+            using (var csvWriter = new CsvWriter(writer))
+            {
+                csvWriter.Configuration.Delimiter = Separator + "";
+                csvWriter.Configuration.HasHeaderRecord = false;
+                csvWriter.Configuration.AutoMap<Model>();
+                csvWriter.WriteRecords(model);
+                writer.Flush();
+            }
+        }
+
 
 
         private void InsertIntoTable(StreamReader file, string tabulka, List<string> sloupce_list)

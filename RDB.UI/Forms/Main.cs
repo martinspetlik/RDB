@@ -66,6 +66,7 @@ namespace RDB.UI.Forms
 
         private void tables_cb_SelectedValueChanged(object sender, EventArgs e)
         {
+            if(import != null)
             import.TableName = tables_cb.Text;
         }
 

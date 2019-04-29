@@ -9,6 +9,8 @@ using CsvHelper;
 using RDB.Data.Models;
 using System.Linq;
 using RDB.Data.Models.Scheme;
+using RDB.UI.ImpExps.ClassMaps;
+using CsvHelper.Configuration;
 
 namespace RDB.UI.ImpExps
 {
@@ -89,21 +91,39 @@ namespace RDB.UI.ImpExps
         /// <param name="sloupce_list"></param>
         private void DataFromTable()
         {
-            
-            switch(TableName.ToLower())
+
+            switch (TableName.ToLower())
             {
-                case "autobus": AutobusExport();  break;
+                case "autobus": AutobusExport(); break;
                 case "jizda": JizdaExport(); break;
                 case "jizdenka": JizdenkaExport(); break;
                 case "klient": KlientExport(); break;
-                case "kontakt": KontaktExport();  break;
+                case "kontakt": KontaktExport(); break;
                 case "lokalita": LokalitaExport(); break;
                 case "mezizastavka": MezizastavkaExport(); break;
                 case "ridic": RidicExport(); break;
                 case "trasy": TrasyExport(); break;
-                case "typkontaktu": TypKontaktuExport(); break;
-                case "znacka": ZnackaExport(); break;
+                case "typkontaktu": EntityExport<ContactType, ContactTypeClassMap>(); break;
+                case "znacka": EntityExport<Model, ModelClassMap>(); break;
                 default: break;
+            }
+        }
+
+        private void EntityExport<TEntity, TClassMapper>()
+            where TEntity : class
+            where TClassMapper : ClassMap<TEntity>
+        {
+            List<TEntity> entities = defaultContext.Set<TEntity>().AsNoTracking().ToList();
+
+            using (StreamWriter writer = new StreamWriter(FilePath))
+            using (CsvWriter csvWriter = new CsvWriter(writer))
+            {
+                csvWriter.Configuration.Delimiter = Separator + "";
+                csvWriter.Configuration.HasHeaderRecord = false;
+                csvWriter.Configuration.RegisterClassMap<TClassMapper>();
+                csvWriter.WriteRecords(entities);
+
+                writer.Flush();
             }
         }
 
@@ -241,38 +261,6 @@ namespace RDB.UI.ImpExps
                 writer.Flush();
             }
         }
-
-        private void TypKontaktuExport()
-        {
-            List<ContactType> types = defaultContext.ContactTypes.AsNoTracking().ToList();
-            using (var mem = new MemoryStream())
-            using (var writer = new StreamWriter(FilePath))
-            using (var csvWriter = new CsvWriter(writer))
-            {
-                csvWriter.Configuration.Delimiter = Separator + "";
-                csvWriter.Configuration.HasHeaderRecord = false;
-                csvWriter.Configuration.AutoMap<ContactType>();
-                csvWriter.WriteRecords(types);
-                writer.Flush();
-            }
-        }
-
-        private void ZnackaExport()
-        {
-            List<Model> model = defaultContext.Models.AsNoTracking().ToList();
-            using (var mem = new MemoryStream())
-            using (var writer = new StreamWriter(FilePath))
-            using (var csvWriter = new CsvWriter(writer))
-            {
-                csvWriter.Configuration.Delimiter = Separator + "";
-                csvWriter.Configuration.HasHeaderRecord = false;
-                csvWriter.Configuration.AutoMap<Model>();
-                csvWriter.WriteRecords(model);
-                writer.Flush();
-            }
-        }
-
-
 
         private void InsertIntoTable(StreamReader file, string tabulka, List<string> sloupce_list)
         {

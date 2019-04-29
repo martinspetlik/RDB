@@ -111,6 +111,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ImpExps\ClassMaps\ContactTypeClassMap.cs" />
+    <Compile Include="ImpExps\ClassMaps\ModelClassMap.cs" />
     <Compile Include="ImpExps\Export.cs" />
     <Compile Include="Forms\Main.cs">
       <SubType>Form</SubType>

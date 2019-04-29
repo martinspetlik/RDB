@@ -1,4 +1,5 @@
 ﻿using RDB.Data.DAL;
+using RDB.Data.Models.Scheme;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -23,14 +24,14 @@ namespace RDB.Data.Extensions
             return tables;
         }
 
-        public static List<String> GetTableColumns(this DefaultContext defaultContext, String tableName)
+        public static List<Column> GetTableColumns(this DefaultContext defaultContext, String tableName)
         {
-            List<String> columns = new List<String>();
+            List<Column> columns = new List<Column>();
             Int16 column_index = 1;
             foreach (DataRow row in defaultContext.Database.Connection.GetSchema("Columns", new String[] { "", "", tableName, "" }).Rows)
             {
-                if(column_index == Int16.Parse(row[4].ToString()))
-                    columns.Add(row[3].ToString());
+                if (column_index == Int16.Parse(row[4].ToString()))
+                    columns.Add(new Column(row));
                 column_index++;
             }
 

@@ -1,7 +1,6 @@
 ﻿using RDB.Data.DAL;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.IO;
@@ -9,6 +8,7 @@ using RDB.Data.Extensions;
 using CsvHelper;
 using RDB.Data.Models;
 using System.Linq;
+using RDB.Data.Models.Scheme;
 
 namespace RDB.UI.ImpExps
 {
@@ -47,20 +47,20 @@ namespace RDB.UI.ImpExps
 
         #region Private methods
 
-        private void PreviewTable(List<string> sloupce_list)
+        private void PreviewTable(List<Column> columns)
         {
             //int counter = 0;
             //string line;
-            string command = TableSelect(sloupce_list);
+            string command = TableSelect(columns);
         }
 
-        private string TableSelect(List<string> sloupce_list)
+        private string TableSelect(List<Column> columns)
         {
             string command = "SELECT ";
-            for (int i = 0; i < sloupce_list.Count; i++)
+            for (int i = 0; i < columns.Count; i++)
             {
-                command += sloupce_list[i];
-                if (i < sloupce_list.Count - 1)
+                command += columns[i];
+                if (i < columns.Count - 1)
                     command += ", ";
             }
             command += " FROM " + TableName;

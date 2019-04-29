@@ -7,6 +7,7 @@ using System.IO;
 using RDB.Data.Extensions;
 using MySql.Data.MySqlClient;
 using System.Linq;
+using RDB.Data.Models.Scheme;
 
 namespace RDB.UI.ImpExps
 {
@@ -119,7 +120,7 @@ namespace RDB.UI.ImpExps
         /// Vložení hodnot ze souboru
         /// </summary>
         /// <param name="columns"></param>
-        private void InsertColumns(List<String> columns)
+        private void InsertColumns(List<Column> columns)
         {
             try
             {
@@ -133,29 +134,41 @@ namespace RDB.UI.ImpExps
             }
         }
 
-        private Int32 InsertIntoTable(String[] rows, List<String> columns)
+        private Int32 InsertIntoTable(String[] rows, List<Column> columns)
         {
             Int32 batchCount = (rows.Length + BATCH_SIZE - 1) / BATCH_SIZE;
-           
+
             for (Int32 i = 0; i < batchCount; i++)
             {
                 String command = GetCommandHeader(columns);
                 IEnumerable<String> batchRows = rows.Skip(i * BATCH_SIZE).Take(BATCH_SIZE);
                 foreach (String row in batchRows)
                 {
-                    command += "(" + String.Join(", ", row.Split(Separator).Select(item => "'" + item + "'")) + "), ";
+                    String[] values = row.Split(Separator);
+                    if (values.Length > 0)
+                    {
+                        command += "(";
+                        for (Int32 j = 0; j < values.Length; j++)
+                        {
+                            if (columns.ElementAt(i).IsString)
+                                command += $"'{values[j]}'";
+                            else
+                                command += values[j];
+                        }
+                        command += ")";
+                    }
                 }
 
                 defaultContext.Database.ExecuteSqlCommand(command.Substring(0, command.Length - 2));
             }
-            
+
             return rows.Length;
         }
 
-        private String GetCommandHeader(List<String> columns)
+        private String GetCommandHeader(List<Column> columns)
         {
             String command = "INSERT INTO " + TableName + " (";
-            command += String.Join(", ", columns);
+            command += String.Join(", ", columns.Select(c => c.Name));
             command += ") VALUES ";
 
             return command;

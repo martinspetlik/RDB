@@ -10,8 +10,11 @@ namespace RDB.Data.Models
         #region Properties
 
         [Key]
-        [Column("cas", Order = 0, TypeName = "timestamp")]
-        public DateTime Time { get; set; }
+        [Column("linka", Order = 1)]
+        [ForeignKey("Route")]
+        public String RouteNumber { get; set; }
+
+        public virtual Route Route { get; set; }
 
         [Required]
         [Column("spz")]
@@ -26,15 +29,10 @@ namespace RDB.Data.Models
         public String DriveLicenseNumber { get; set; }
 
         public virtual Driver Driver { get; set; }
-
+        
         [Key]
-        [Column("linka", Order = 1)]
-        [ForeignKey("Route")]
-        public String RouteNumber { get; set; }
-
-        public virtual Route Route { get; set; }
-
-        public String Pole { get; set; }
+        [Column("cas", Order = 0, TypeName = "timestamp")]
+        public DateTime Time { get; set; }
 
         #endregion
     }

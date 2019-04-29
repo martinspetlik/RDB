@@ -135,9 +135,8 @@ namespace RDB.UI.ImpExps
 
         private Int32 InsertIntoTable(String[] rows, List<String> columns)
         {
-            Int32 batchCount = rows.Length;
-           // if (rows.Length > 500)
-            //    batchCount = rows.Length / BATCH_SIZE;
+            Int32 batchCount = (rows.Length + BATCH_SIZE - 1) / BATCH_SIZE;
+           
             for (Int32 i = 0; i < batchCount; i++)
             {
                 String command = GetCommandHeader(columns);
@@ -149,11 +148,7 @@ namespace RDB.UI.ImpExps
 
                 defaultContext.Database.ExecuteSqlCommand(command.Substring(0, command.Length - 2));
             }
-
-            //defaultContext.Locations.Add(new Data.Models.Location { Name = "Bystrička" });
-            //defaultContext.Locations.Add(new Data.Models.Location { Name = "Bystřička" });
-            //defaultContext.SaveChanges();
-
+            
             return rows.Length;
         }
 

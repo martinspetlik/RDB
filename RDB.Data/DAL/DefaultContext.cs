@@ -1,6 +1,5 @@
 ﻿using MySql.Data.EntityFramework;
 using RDB.Data.Models;
-using System;
 using System.Data.Entity;
 
 namespace RDB.Data.DAL

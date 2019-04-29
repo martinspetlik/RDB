@@ -1,7 +1,7 @@
 namespace RDB.Data.Migrations
 {
     using System.Data.Entity.Migrations;
-    
+
     public partial class Init : DbMigration
     {
         public override void Up()
@@ -71,11 +71,10 @@ namespace RDB.Data.Migrations
                 "dbo.Jizda",
                 c => new
                     {
-                        cas = c.DateTime(nullable: false, precision: 0, storeType: "timestamp"),
                         linka = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
                         spz = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
                         cislo_rp = c.String(nullable: false, maxLength: 50, storeType: "nvarchar"),
-                        Pole = c.String(unicode: false),
+                        cas = c.DateTime(nullable: false, precision: 0, storeType: "timestamp"),
                     })
                 .PrimaryKey(t => new { t.cas, t.linka })
                 .ForeignKey("dbo.Autobus", t => t.spz, cascadeDelete: true)

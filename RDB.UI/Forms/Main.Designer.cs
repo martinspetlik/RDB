@@ -31,6 +31,7 @@
             this.tabs = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.zip_ch = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.od_car_rad = new System.Windows.Forms.RadioButton();
@@ -55,7 +56,7 @@
             this.tables_cb_e = new System.Windows.Forms.ComboBox();
             this.export_bt = new System.Windows.Forms.Button();
             this.preview_e = new System.Windows.Forms.ListView();
-            this.zip_ch = new System.Windows.Forms.CheckBox();
+            this.zip_ch_e = new System.Windows.Forms.CheckBox();
             this.tabs.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -102,6 +103,17 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(572, 240);
             this.panel1.TabIndex = 0;
+            // 
+            // zip_ch
+            // 
+            this.zip_ch.AutoSize = true;
+            this.zip_ch.Location = new System.Drawing.Point(9, 31);
+            this.zip_ch.Name = "zip_ch";
+            this.zip_ch.Size = new System.Drawing.Size(76, 17);
+            this.zip_ch.TabIndex = 40;
+            this.zip_ch.Text = "Soubor zip";
+            this.zip_ch.UseVisualStyleBackColor = true;
+            this.zip_ch.CheckedChanged += new System.EventHandler(this.zip_ch_CheckedChanged);
             // 
             // label2
             // 
@@ -230,6 +242,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.zip_ch_e);
             this.panel3.Controls.Add(this.preview_bt);
             this.panel3.Controls.Add(this.label3);
             this.panel3.Controls.Add(this.panel4);
@@ -255,7 +268,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 59);
+            this.label3.Location = new System.Drawing.Point(3, 65);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(102, 13);
             this.label3.TabIndex = 39;
@@ -266,7 +279,7 @@
             this.panel4.Controls.Add(this.od_car_rad_e);
             this.panel4.Controls.Add(this.od_tab_rad_e);
             this.panel4.Controls.Add(this.od_str_rad_e);
-            this.panel4.Location = new System.Drawing.Point(6, 75);
+            this.panel4.Location = new System.Drawing.Point(6, 81);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(130, 72);
             this.panel4.TabIndex = 38;
@@ -306,7 +319,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 6);
+            this.label4.Location = new System.Drawing.Point(3, 25);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(76, 13);
             this.label4.TabIndex = 36;
@@ -315,7 +328,7 @@
             // tables_cb_e
             // 
             this.tables_cb_e.FormattingEnabled = true;
-            this.tables_cb_e.Location = new System.Drawing.Point(6, 22);
+            this.tables_cb_e.Location = new System.Drawing.Point(6, 41);
             this.tables_cb_e.Name = "tables_cb_e";
             this.tables_cb_e.Size = new System.Drawing.Size(130, 21);
             this.tables_cb_e.TabIndex = 35;
@@ -340,16 +353,15 @@
             this.preview_e.TabIndex = 33;
             this.preview_e.UseCompatibleStateImageBehavior = false;
             // 
-            // zip_ch
+            // zip_ch_e
             // 
-            this.zip_ch.AutoSize = true;
-            this.zip_ch.Location = new System.Drawing.Point(9, 31);
-            this.zip_ch.Name = "zip_ch";
-            this.zip_ch.Size = new System.Drawing.Size(76, 17);
-            this.zip_ch.TabIndex = 40;
-            this.zip_ch.Text = "Soubor zip";
-            this.zip_ch.UseVisualStyleBackColor = true;
-            this.zip_ch.CheckedChanged += new System.EventHandler(this.zip_ch_CheckedChanged);
+            this.zip_ch_e.AutoSize = true;
+            this.zip_ch_e.Location = new System.Drawing.Point(6, 5);
+            this.zip_ch_e.Name = "zip_ch_e";
+            this.zip_ch_e.Size = new System.Drawing.Size(76, 17);
+            this.zip_ch_e.TabIndex = 41;
+            this.zip_ch_e.Text = "Soubor zip";
+            this.zip_ch_e.UseVisualStyleBackColor = true;
             // 
             // Main
             // 
@@ -407,6 +419,7 @@
         private System.Windows.Forms.ListView preview_e;
         private System.Windows.Forms.Button preview_bt;
         private System.Windows.Forms.CheckBox zip_ch;
+        private System.Windows.Forms.CheckBox zip_ch_e;
     }
 }
 

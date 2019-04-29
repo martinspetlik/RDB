@@ -28,8 +28,8 @@ namespace RDB.UI.Forms
 
             defaultContext = new DefaultContext();
 
-            Watermark marker = new Watermark(defaultContext);
-            marker.Watermarking();
+            //Watermark marker = new Watermark(defaultContext);
+            //marker.Watermarking();
 
             List<String> tableNames = defaultContext.GetScheme();
             import = new Import(defaultContext, tables_cb, tableNames);
@@ -87,7 +87,7 @@ namespace RDB.UI.Forms
 
         private void export_bt_Click(object sender, EventArgs e)
         {
-            export.SaveFile(od_car_rad_e, od_str_rad_e, od_tab_rad_e);
+            export.SaveFile(od_car_rad_e, od_str_rad_e, od_tab_rad_e, zip_ch_e);
         }
 
         private void zip_ch_CheckedChanged(object sender, EventArgs e)

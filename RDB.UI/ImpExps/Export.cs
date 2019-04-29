@@ -94,15 +94,15 @@ namespace RDB.UI.ImpExps
 
             switch (TableName.ToLower())
             {
-                case "autobus": AutobusExport(); break;
-                case "jizda": JizdaExport(); break;
-                case "jizdenka": JizdenkaExport(); break;
-                case "klient": KlientExport(); break;
-                case "kontakt": KontaktExport(); break;
-                case "lokalita": LokalitaExport(); break;
-                case "mezizastavka": MezizastavkaExport(); break;
-                case "ridic": RidicExport(); break;
-                case "trasy": TrasyExport(); break;
+                case "autobus": EntityExport<Bus,BusClassMap>(); break;
+                case "jizda": EntityExport<Drive, DriveClassMap>(); break;
+                case "jizdenka": EntityExport<Ticket, TicketClassMap>(); break;
+                case "klient": EntityExport<Client, ClientClassMap>(); break;
+                case "kontakt": EntityExport<Contact, ContactClassMap>(); break;
+                case "lokalita": EntityExport<Location, LocationClassMap>(); break;
+                case "mezizastavka": EntityExport<Station, StationClassMap>(); break;
+                case "ridic": EntityExport<Driver, DriverClassMap>(); break;
+                case "trasy": EntityExport<Route, RouteClassMap>(); break;
                 case "typkontaktu": EntityExport<ContactType, ContactTypeClassMap>(); break;
                 case "znacka": EntityExport<Model, ModelClassMap>(); break;
                 default: break;
@@ -123,141 +123,6 @@ namespace RDB.UI.ImpExps
                 csvWriter.Configuration.RegisterClassMap<TClassMapper>();
                 csvWriter.WriteRecords(entities);
 
-                writer.Flush();
-            }
-        }
-
-        private void AutobusExport()
-        {
-            List<Bus> buses = defaultContext.Buses.AsNoTracking().ToList();
-            using (var mem = new MemoryStream())
-            using (var writer = new StreamWriter(FilePath))
-            using (var csvWriter = new CsvWriter(writer))
-            {
-                csvWriter.Configuration.Delimiter = Separator + "";
-                csvWriter.Configuration.HasHeaderRecord = false;
-                csvWriter.Configuration.AutoMap<Bus>();
-                csvWriter.WriteRecords(buses);
-                writer.Flush();
-            }
-        }
-
-        private void JizdaExport()
-        {
-            List<Drive> driv = defaultContext.Drives.AsNoTracking().ToList();
-            using (var mem = new MemoryStream())
-            using (var writer = new StreamWriter(FilePath))
-            using (var csvWriter = new CsvWriter(writer))
-            {
-                csvWriter.Configuration.Delimiter = Separator + "";
-                csvWriter.Configuration.HasHeaderRecord = false;
-                csvWriter.Configuration.AutoMap<Drive>();
-                csvWriter.WriteRecords(driv);
-                writer.Flush();
-            }
-        }
-
-        private void JizdenkaExport()
-        {
-            List<Ticket> tic = defaultContext.Tickets.AsNoTracking().ToList();
-            using (var mem = new MemoryStream())
-            using (var writer = new StreamWriter(FilePath))
-            using (var csvWriter = new CsvWriter(writer))
-            {
-                csvWriter.Configuration.Delimiter = Separator + "";
-                csvWriter.Configuration.HasHeaderRecord = false;
-                csvWriter.Configuration.AutoMap<Ticket>();
-                csvWriter.WriteRecords(tic);
-                writer.Flush();
-            }
-        }
-
-        private void KlientExport()
-        {
-            List<Client> cli = defaultContext.Clients.AsNoTracking().ToList();
-            using (var mem = new MemoryStream())
-            using (var writer = new StreamWriter(FilePath))
-            using (var csvWriter = new CsvWriter(writer))
-            {
-                csvWriter.Configuration.Delimiter = Separator + "";
-                csvWriter.Configuration.HasHeaderRecord = false;
-                csvWriter.Configuration.AutoMap<Client>();
-                csvWriter.WriteRecords(cli);
-                writer.Flush();
-            }
-        }
-
-        private void KontaktExport()
-        {
-            List<Contact> cont = defaultContext.Contacts.AsNoTracking().ToList();
-            using (var mem = new MemoryStream())
-            using (var writer = new StreamWriter(FilePath))
-            using (var csvWriter = new CsvWriter(writer))
-            {
-                csvWriter.Configuration.Delimiter = Separator + "";
-                csvWriter.Configuration.HasHeaderRecord = false;
-                csvWriter.Configuration.AutoMap<Contact>();
-                csvWriter.WriteRecords(cont);
-                writer.Flush();
-            }
-        }
-
-        private void LokalitaExport()
-        {
-            List<Location> loca = defaultContext.Locations.AsNoTracking().ToList();
-            using (var mem = new MemoryStream())
-            using (var writer = new StreamWriter(FilePath))
-            using (var csvWriter = new CsvWriter(writer))
-            {
-                csvWriter.Configuration.Delimiter = Separator + "";
-                csvWriter.Configuration.HasHeaderRecord = false;
-                csvWriter.Configuration.AutoMap<Location>();
-                csvWriter.WriteRecords(loca);
-                writer.Flush();
-            }
-        }
-
-        private void MezizastavkaExport()
-        {
-            List<Station> stat = defaultContext.Stations.AsNoTracking().ToList();
-            using (var mem = new MemoryStream())
-            using (var writer = new StreamWriter(FilePath))
-            using (var csvWriter = new CsvWriter(writer))
-            {
-                csvWriter.Configuration.Delimiter = Separator + "";
-                csvWriter.Configuration.HasHeaderRecord = false;
-                csvWriter.Configuration.AutoMap<Station>();
-                csvWriter.WriteRecords(stat);
-                writer.Flush();
-            }
-        }
-
-        private void RidicExport()
-        {
-            List<Driver> driver = defaultContext.Drivers.AsNoTracking().ToList();
-            using (var mem = new MemoryStream())
-            using (var writer = new StreamWriter(FilePath))
-            using (var csvWriter = new CsvWriter(writer))
-            {
-                csvWriter.Configuration.Delimiter = Separator + "";
-                csvWriter.Configuration.HasHeaderRecord = false;
-                csvWriter.Configuration.AutoMap<Driver>();
-                csvWriter.WriteRecords(driver);
-                writer.Flush();
-            }
-        }
-
-        private void TrasyExport()
-        {
-            List<Route> routes = defaultContext.Routes.AsNoTracking().ToList();
-            using (var mem = new MemoryStream())
-            using (var writer = new StreamWriter(FilePath))
-            using (var csvWriter = new CsvWriter(writer))
-            {
-                csvWriter.Configuration.Delimiter = Separator + "";
-                csvWriter.Configuration.HasHeaderRecord = false;
-                csvWriter.Configuration.AutoMap<Route>();
-                csvWriter.WriteRecords(routes);
                 writer.Flush();
             }
         }

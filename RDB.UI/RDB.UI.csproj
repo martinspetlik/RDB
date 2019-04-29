@@ -111,6 +111,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ImpExps\ClassMaps\BusClassMap.cs" />
+    <Compile Include="ImpExps\ClassMaps\DriveClassMap.cs" />
+    <Compile Include="ImpExps\ClassMaps\TicketClassMap.cs" />
+    <Compile Include="ImpExps\ClassMaps\DriverClassMap.cs" />
+    <Compile Include="ImpExps\ClassMaps\LocationClassMap.cs" />
+    <Compile Include="ImpExps\ClassMaps\ClientClassMap.cs" />
+    <Compile Include="ImpExps\ClassMaps\ContactClassMap.cs" />
+    <Compile Include="ImpExps\ClassMaps\StationClassMap.cs" />
+    <Compile Include="ImpExps\ClassMaps\RouteClassMap.cs" />
     <Compile Include="ImpExps\ClassMaps\ContactTypeClassMap.cs" />
     <Compile Include="ImpExps\ClassMaps\ModelClassMap.cs" />
     <Compile Include="ImpExps\Export.cs" />

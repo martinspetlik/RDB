@@ -55,6 +55,7 @@
             this.tables_cb_e = new System.Windows.Forms.ComboBox();
             this.export_bt = new System.Windows.Forms.Button();
             this.preview_e = new System.Windows.Forms.ListView();
+            this.zip_ch = new System.Windows.Forms.CheckBox();
             this.tabs.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -87,6 +88,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.zip_ch);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.panel2);
             this.panel1.Controls.Add(this.label1);
@@ -155,7 +157,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 46);
+            this.label1.Location = new System.Drawing.Point(6, 51);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(76, 13);
             this.label1.TabIndex = 36;
@@ -164,7 +166,7 @@
             // tables_cb
             // 
             this.tables_cb.FormattingEnabled = true;
-            this.tables_cb.Location = new System.Drawing.Point(9, 62);
+            this.tables_cb.Location = new System.Drawing.Point(6, 73);
             this.tables_cb.Name = "tables_cb";
             this.tables_cb.Size = new System.Drawing.Size(130, 21);
             this.tables_cb.TabIndex = 35;
@@ -338,6 +340,17 @@
             this.preview_e.TabIndex = 33;
             this.preview_e.UseCompatibleStateImageBehavior = false;
             // 
+            // zip_ch
+            // 
+            this.zip_ch.AutoSize = true;
+            this.zip_ch.Location = new System.Drawing.Point(9, 31);
+            this.zip_ch.Name = "zip_ch";
+            this.zip_ch.Size = new System.Drawing.Size(76, 17);
+            this.zip_ch.TabIndex = 40;
+            this.zip_ch.Text = "Soubor zip";
+            this.zip_ch.UseVisualStyleBackColor = true;
+            this.zip_ch.CheckedChanged += new System.EventHandler(this.zip_ch_CheckedChanged);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -393,6 +406,7 @@
         private System.Windows.Forms.Button export_bt;
         private System.Windows.Forms.ListView preview_e;
         private System.Windows.Forms.Button preview_bt;
+        private System.Windows.Forms.CheckBox zip_ch;
     }
 }
 

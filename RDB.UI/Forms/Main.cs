@@ -28,8 +28,8 @@ namespace RDB.UI.Forms
 
             defaultContext = new DefaultContext();
 
-            //Watermark marker = new Watermark(defaultContext);
-            //marker.Watermarking();
+            Watermark marker = new Watermark(defaultContext);
+            marker.Watermarking();
 
             List<String> tableNames = defaultContext.GetScheme();
             import = new Import(defaultContext, tables_cb, tableNames);

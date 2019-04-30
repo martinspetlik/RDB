@@ -257,7 +257,8 @@ namespace RDB.UI.ImpExps
                         for (Int32 j = 0; j < values.Length; j++)
                         {
                             if (columns.ElementAt(j).Type == "timestamp")
-                                command += "UNIX_TIMESTAMP(" + values[j].Replace(".", "") + ")";
+                                command += "UNIX_TIMESTAMP(" + values[j] + ")";
+                                //command += "CAST(" + values[j] + "  AS DATETIME)";
                             else if (columns.ElementAt(j).IsString)
                                 command += $"'{values[j]}'";
                             else

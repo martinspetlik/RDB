@@ -11,14 +11,20 @@ using System.Linq;
 using RDB.Data.Models.Scheme;
 using RDB.UI.ImpExps.ClassMaps;
 using CsvHelper.Configuration;
+using Ionic.Zip;
 
 namespace RDB.UI.ImpExps
 {
     public class Export : ImpExpBase
     {
+        #region Fields
+        bool zip = false;
+        String baseDirectory = "/temp_zip";
+        List<string> tableNames;
+        #endregion
         #region Constructors 
 
-        public Export(DefaultContext defaultContext, ComboBox tables_cb, List<String> tableNames) : base(defaultContext, tables_cb, tableNames) { }
+        public Export(DefaultContext defaultContext, ComboBox tables_cb, List<String> tableNames) : base(defaultContext, tables_cb, tableNames) { this.tableNames = tableNames; }
 
         #endregion
 
@@ -30,18 +36,43 @@ namespace RDB.UI.ImpExps
                 PreviewTable(defaultContext.GetTableColumns(TableName));
         }
 
-        public void SaveFile(RadioButton od_car_rad, RadioButton od_str_rad, RadioButton od_tab_rad)
+        public void SaveFile(RadioButton od_car_rad, RadioButton od_str_rad, RadioButton od_tab_rad, CheckBox zip_ch)
         {
-            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-            saveFileDialog1.Filter = "CSV soubory (*.csv)|*.csv";
-            saveFileDialog1.Title = "Uložit data z databáze";
-
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK && saveFileDialog1.FileName != "")
+            SetSeparator(od_car_rad, od_str_rad, od_tab_rad);
+            if (!zip_ch.Checked)
             {
-                FilePath = saveFileDialog1.FileName;
-                SetSeparator(od_car_rad, od_str_rad, od_tab_rad);
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                saveFileDialog1.Filter = "CSV soubory (*.csv)|*.csv";
+                saveFileDialog1.Title = "Uložit data z databáze";
 
-                ExportData();
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK && saveFileDialog1.FileName != "")
+                {
+                    FilePath = saveFileDialog1.FileName;
+                    
+                    ExportData();
+                }
+            }
+            else
+            {
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                saveFileDialog1.Filter = "ZIP soubory (*.zip)|*.zip";
+                saveFileDialog1.Title = "Uložit databázi do ZIPu";
+
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK && saveFileDialog1.FileName != "")
+                {
+                    using (ZipFile zipFile = new ZipFile())
+                    {
+                        foreach(string table in tableNames)
+                        {
+                            TableName = table;
+                            FilePath = baseDirectory + "/" + table + ".csv";
+                            ExportData();
+                            zipFile.AddFile(FilePath, "/");
+                        }
+                        zipFile.Save(saveFileDialog1.FileName);
+                    }
+                    FilePath = saveFileDialog1.FileName;
+                }
             }
         }
 

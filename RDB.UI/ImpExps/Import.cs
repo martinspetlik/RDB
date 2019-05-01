@@ -167,7 +167,6 @@ namespace RDB.UI.ImpExps
                 TableName = "jizda";
                 FilePath = baseDirectory + "/" + TableName + ".csv";
                 InsertColumns(defaultContext.GetTableColumns(TableName));
-
             }
         }
 
@@ -240,15 +239,6 @@ namespace RDB.UI.ImpExps
             }
         }
 
-        private static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
-        {
-            // Unix timestamp is seconds past epoch
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dtDateTime;
-        }
-
-
         private Int32 InsertIntoTable(String[] rows, List<Column> columns)
         {
             Int32 batchCount = (rows.Length + BATCH_SIZE - 1) / BATCH_SIZE;
@@ -266,11 +256,9 @@ namespace RDB.UI.ImpExps
                         for (Int32 j = 0; j < values.Length; j++)
                         {
                             if (columns.ElementAt(j).Type == "timestamp")
-                            {
                                 command += "FROM_UNIXTIME(" + values[j] + ")";
-                            }
                             else if (columns.ElementAt(j).IsString)
-                                command += $"'{values[j]}'";
+                                command += values[j] == "\\N" ? "NULL" : $"'{values[j]}'";
                             else
                                 command += values[j];
 

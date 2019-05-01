@@ -31,7 +31,7 @@ CREATE index  `IX_typ` on `Kontakt` (`typ` DESC) using HASH;
 CREATE index  `IX_cislo_rp` on `Kontakt` (`cislo_rp` DESC) using HASH;
 create table `TypKontaktu` (`typ` nvarchar(50)  not null collate utf8_bin ,primary key ( `typ`) ) engine=InnoDb auto_increment=0;
 create table `Ridic` (`cislo_rp` nvarchar(50)  not null collate utf8_bin ,`jmeno` nvarchar(50)  not null ,`prijmeni` nvarchar(50)  not null ,primary key ( `cislo_rp`) ) engine=InnoDb auto_increment=0;
-create table `Jizda` (`linka` nvarchar(50)  not null collate utf8_bin ,`spz` nvarchar(50)  not null ,`cislo_rp` nvarchar(50)  not null ,`cas` timestamp not null ,primary key ( `cas`,`linka`) ) engine=InnoDb auto_increment=0;
+create table `Jizda` (`linka` nvarchar(50)  not null collate utf8_bin ,`spz` nvarchar(50)  not null ,`cislo_rp` nvarchar(50)  not null ,`cas` timestamp(5) not null ,primary key ( `cas`,`linka`) ) engine=InnoDb auto_increment=0;
 CREATE index  `IX_linka` on `Jizda` (`linka` DESC) using HASH;
 CREATE index  `IX_spz` on `Jizda` (`spz` DESC) using HASH;
 CREATE index  `IX_cislo_rp` on `Jizda` (`cislo_rp` DESC) using HASH;

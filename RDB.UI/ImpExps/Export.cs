@@ -18,7 +18,6 @@ namespace RDB.UI.ImpExps
     public class Export : ImpExpBase
     {
         #region Fields
-        bool zip = false;
         String baseDirectory = "/temp_zip";
         List<string> tableNames;
         #endregion

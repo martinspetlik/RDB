@@ -94,9 +94,9 @@
   <ItemGroup>
     <Compile Include="DAL\DefaultContext.cs" />
     <Compile Include="Extensions\SchemeExtension.cs" />
-    <Compile Include="Migrations\201904291720514_Init.cs" />
-    <Compile Include="Migrations\201904291720514_Init.Designer.cs">
-      <DependentUpon>201904291720514_Init.cs</DependentUpon>
+    <Compile Include="Migrations\201905011618252_Init.cs" />
+    <Compile Include="Migrations\201905011618252_Init.Designer.cs">
+      <DependentUpon>201905011618252_Init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Bus.cs" />
@@ -118,8 +118,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201904291720514_Init.resx">
-      <DependentUpon>201904291720514_Init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201905011618252_Init.resx">
+      <DependentUpon>201905011618252_Init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

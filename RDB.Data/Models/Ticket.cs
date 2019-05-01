@@ -9,9 +9,10 @@ namespace RDB.Data.Models
     {
         #region Properties
 
-        [Key]
-        [Column("cislo", TypeName = "bigint")]
-        public Int64 Number { get; set; }
+        [Required]
+        [ForeignKey("Drive")]
+        [Column("linka", Order = 1)]
+        public String RouteNumber { get; set; }
 
         [Column("email")]
         [ForeignKey("Client")]
@@ -24,12 +25,11 @@ namespace RDB.Data.Models
         [Column("cas", Order = 0, TypeName = "timestamp")]
         public DateTime DriveTime { get; set; }
 
-        [Required]
-        [ForeignKey("Drive")]
-        [Column("linka", Order = 1)]
-        public String RouteNumber { get; set; }
-
         public virtual Drive Drive { get; set; }
+
+        [Key]
+        [Column("cislo", TypeName = "bigint")]
+        public Int64 Number { get; set; }
 
         #endregion
     }

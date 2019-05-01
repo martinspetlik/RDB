@@ -1,11 +1,13 @@
 ﻿using RDB.Data.DAL;
+using RDB.Data.Models;
 using System;
 using System.Drawing;
 using System.Text;
 using System.IO;
-using RDB.Data.Models;
 using System.Collections;
+using System.Collections.Generic;
 using System.Security.Cryptography;
+
 
 namespace RDB.UI.Watermarking
 {
@@ -137,16 +139,16 @@ namespace RDB.UI.Watermarking
             }
 
             //this.changeData();
-            this.checkWatermark();
+            //this.checkWatermark();
         }
 
 
-        public void checkWatermark()
+        public float checkWatermark()
         {
             int totalCount = 0;
             int matchCount = 0;
 
-            foreach (Drive drive in defaultContext.Drives)
+            foreach (Drive drive in this.defaultContext.Drives)
             {
                     string primaryKey = this.GetPKString(drive);
 
@@ -169,8 +171,8 @@ namespace RDB.UI.Watermarking
                     }
 
                 }
-                
-            Console.WriteLine("Watermarked " + ((float)matchCount / (float)totalCount));
+            var ratio = (float)matchCount / (float)totalCount;
+            return ratio;
         }
 
 

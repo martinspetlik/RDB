@@ -9,9 +9,9 @@ namespace RDB.UI.ImpExps.ClassMaps
 
         public DriverClassMap()
         {
-            Map(m => m.LicenseNumber);
-            Map(m => m.Firstname);
-            Map(m => m.Surname);
+            Map(m => m.LicenseNumber).Index(0);
+            Map(m => m.Firstname).Index(1);
+            Map(m => m.Surname).Index(2);
         }
 
         #endregion

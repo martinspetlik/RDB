@@ -9,9 +9,9 @@ namespace RDB.UI.ImpExps.ClassMaps
 
         public RouteClassMap()
         {
-            Map(m => m.Number);
-            Map(m => m.DepartureName);
-            Map(m => m.ArrivalName);
+            Map(m => m.Number).Index(0);
+            Map(m => m.DepartureName).Index(1);
+            Map(m => m.ArrivalName).Index(2);
         }
 
         #endregion

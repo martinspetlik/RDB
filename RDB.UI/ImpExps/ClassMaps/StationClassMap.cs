@@ -9,8 +9,8 @@ namespace RDB.UI.ImpExps.ClassMaps
 
         public StationClassMap()
         {
-            Map(m => m.Name);
-            Map(m => m.RouteNumber);
+            Map(m => m.Name).Index(0);
+            Map(m => m.RouteNumber).Index(1);
         }
 
         #endregion

@@ -9,10 +9,10 @@ namespace RDB.UI.ImpExps.ClassMaps
 
         public DriveClassMap()
         {
-            Map(m => m.RouteNumber);
-            Map(m => m.BusPlate);
-            Map(m => m.DriveLicenseNumber);
-            Map(m => m.Time);
+            Map(m => m.RouteNumber).Index(0);
+            Map(m => m.BusPlate).Index(1);
+            Map(m => m.DriveLicenseNumber).Index(2);
+            Map(m => m.Time).Index(3);
         }
 
         #endregion

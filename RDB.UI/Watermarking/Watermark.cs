@@ -27,22 +27,22 @@ namespace RDB.UI.Watermarking
 
         public Watermark(DefaultContext defaultContext)
         {
-            this.imageBitMatrix = this.ProcessImage();
+            this.imageBitMatrix = this.ProcessImage("Watermarking/random_image.jpg");
             this.defaultContext = defaultContext;
-            this.fraction = 30; 
+            this.fraction = 1; 
             this.lsbCandidates = 3; 
-            this.secretKey = 123;
+            this.secretKey = 5674932;
         }
 
 
-        public BitArray[] ProcessImage()
+        public BitArray[] ProcessImage(String imagePath)
         { 
-            var image_bits = this.LoadImage(Image.FromFile("Watermarking/random_image.jpg"));
-            BitArray bits = new BitArray(image_bits);
 
+            BitArray bits = new BitArray(File.ReadAllBytes(imagePath));
             // Should be from image variable
-            this.imageRowSize = 71;
-            this.imageColumnSize = 3479;
+            this.imageRowSize = 1176;
+            this.imageColumnSize = 71;
+
 
             return this.BitsToMatrix(bits, imageRowSize, imageColumnSize);
 
@@ -55,22 +55,21 @@ namespace RDB.UI.Watermarking
             {
                 imageIn.Save(ms, imageIn.RawFormat);
                 return ms.ToArray();
+
             }
         }
 
 
         public BitArray[] BitsToMatrix(BitArray Input, int rowSize, int columnSize)
         {
-
             BitArray[] Output = new BitArray[rowSize];
 
-            //Environment.Exit(1);
             for (int i = 0; i < rowSize; i += 1)
             {
                 BitArray bitsRow = new BitArray(columnSize);
                 for (int j = 0; j < columnSize; j++)
                 {
-                    bitsRow.Set(j, Input.Get(i + j));
+                    bitsRow.Set(j, Input.Get((i*columnSize) + j));
                 }
 
                 Output.SetValue(bitsRow, i);
@@ -82,7 +81,7 @@ namespace RDB.UI.Watermarking
         public String GetPKString(Drive drive)
         {
             // Join all primary key attributes
-            string[] primaryKeys = new String[] { drive.RouteNumber, drive.Time.ToString() };
+            string[] primaryKeys = new String[] { drive.RouteNumber, drive.BusPlate };
             return String.Join("", primaryKeys);
         }
 
@@ -104,6 +103,7 @@ namespace RDB.UI.Watermarking
             int cIndex = this.CreateHash(String.Concat(hash, columnValue)) % imageColumnSize;
 
             BitArray finalRow = (BitArray)this.imageBitMatrix.GetValue(rIndex);
+
             return finalRow[cIndex];
         }
 
@@ -138,13 +138,11 @@ namespace RDB.UI.Watermarking
 
             //this.changeData();
             this.checkWatermark();
-
         }
 
 
         public void checkWatermark()
         {
- 
             int totalCount = 0;
             int matchCount = 0;
 
@@ -154,7 +152,6 @@ namespace RDB.UI.Watermarking
 
                     // Hash from primary key + our 'secret' key
                     var hash = this.CreateHash(String.Concat(this.secretKey, primaryKey));
-
 
                     if (hash % this.fraction == 0)
                     {
@@ -172,11 +169,8 @@ namespace RDB.UI.Watermarking
                     }
 
                 }
-
-            if ((float) matchCount / (float)totalCount >= 0.9) {
-                Console.WriteLine("Watermarked " + ((float)matchCount / (float)totalCount));
-
-            }
+                
+            Console.WriteLine("Watermarked " + ((float)matchCount / (float)totalCount));
         }
 
 
@@ -189,23 +183,41 @@ namespace RDB.UI.Watermarking
         }
 
 
-        public void changeData()
-        {
-            var drives = defaultContext.Drives;
+        //public void changeData()
+        //{
+        //    var drives = defaultContext.Drives;
 
-            var index = 0;
-            foreach (Drive drive in drives)
-            {
-                if (index % 5 == 0)
-                {
-                    //drive.Time = drive.Time.AddSeconds(2);
-                    drive.RouteNumber = "adlfj";
-                }
+        //    var index = 0;
+        //    foreach (Drive drive in drives)
+        //    {
 
-                index++;
-            }
+        //        //if (index % 5 == 0)
+        //        //{
 
-        }
+        //        //DateTime startDate = new DateTime(2000, 1, 1, 10, 0, 0);
+        //        //DateTime endDate = new DateTime(2020, 1, 1, 17, 0, 0);
+
+        //        ////drive.Time = drive.Time.AddSeconds(2);
+        //        //TimeSpan timeSpan = endDate - startDate;
+        //        //var randomTest = new Random();
+        //        //TimeSpan newSpan = new TimeSpan(0, randomTest.Next(0, (int)timeSpan.TotalMinutes), 0);
+        //        //DateTime newDate = startDate + newSpan;
+
+        //            //Console.WriteLine("drive time " + drive.Time);
+        //            drive.Time = drive.Time.AddHours(2);
+
+        //            //Console.WriteLine("new drive time " + drive.Time);
+
+        //            Random randObj = new Random(0);
+        //            //drive.BusPlate = randObj.Next().ToString();
+
+        //            //drive.RouteNumber = randObj.Next().ToString();
+
+        //            index++;
+        //       // }
+        //    }
+
+        //}
 
 
         public string GetColumnValue(BitArray[] bitMatrix, int index)

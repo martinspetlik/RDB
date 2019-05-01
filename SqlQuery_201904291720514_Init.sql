@@ -42,7 +42,7 @@ create table `Lokalita` (`nazev` nvarchar(50)  not null collate utf8_bin ,primar
 create table `Mezizastavka` (`nazev` nvarchar(50)  not null collate utf8_bin ,`linka` nvarchar(50)  not null collate utf8_bin ,primary key ( `nazev`,`linka`) ) engine=InnoDb auto_increment=0;
 CREATE index  `IX_nazev` on `Mezizastavka` (`nazev` DESC) using HASH;
 CREATE index  `IX_linka` on `Mezizastavka` (`linka` DESC) using HASH;
-create table `Jizdenka` (`cas` timestamp(5) not null ,`linka` nvarchar(50)  not null collate utf8_bin ,`cislo` bigint not null  auto_increment ,`email` nvarchar(50) collate utf8_bin ,primary key ( `cislo`) ) engine=InnoDb auto_increment=0;
+create table `Jizdenka` (`linka` nvarchar(50) not null collate utf8_bin, `email` nvarchar(50) collate utf8_bin, `cas` timestamp(5) not null ,`cislo` bigint not null  auto_increment, primary key ( `cislo`) ) engine=InnoDb auto_increment=0;
 CREATE index  `IX_cas_linka` on `Jizdenka` (`cas` DESC,`linka` DESC) using HASH;
 CREATE index  `IX_email` on `Jizdenka` (`email` DESC) using HASH;
 alter table `Autobus` add constraint `FK_Autobus_Znacka_znacka`  foreign key (`znacka`) references `Znacka` ( `znacka`)  on update cascade on delete cascade ;

@@ -9,7 +9,7 @@ namespace RDB.UI.ImpExps.ClassMaps
 
         public ContactTypeClassMap()
         {
-            Map(m => m.Type);
+            Map(m => m.Type).Index(0);
         }
 
         #endregion

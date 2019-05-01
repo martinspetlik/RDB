@@ -9,9 +9,9 @@ namespace RDB.UI.ImpExps.ClassMaps
 
         public ContactClassMap()
         {
-            Map(m => m.Value);
-            Map(m => m.Type);
-            Map(m => m.DriverLicenseNumber);
+            Map(m => m.Value).Index(0);
+            Map(m => m.Type).Index(1);
+            Map(m => m.DriverLicenseNumber).Index(2);
         }
 
         #endregion

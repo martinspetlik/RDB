@@ -9,7 +9,7 @@ namespace RDB.UI.ImpExps.ClassMaps
 
         public LocationClassMap()
         {
-            Map(m => m.Name);
+            Map(m => m.Name).Index(0);
         }
 
         #endregion

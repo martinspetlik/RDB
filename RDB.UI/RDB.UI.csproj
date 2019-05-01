@@ -122,6 +122,8 @@
     <Compile Include="ImpExps\ClassMaps\RouteClassMap.cs" />
     <Compile Include="ImpExps\ClassMaps\ContactTypeClassMap.cs" />
     <Compile Include="ImpExps\ClassMaps\ModelClassMap.cs" />
+    <Compile Include="ImpExps\Converters\DateTimeTypeConverter.cs" />
+    <Compile Include="ImpExps\Converters\NullTypeConverter.cs" />
     <Compile Include="ImpExps\Export.cs" />
     <Compile Include="Forms\Main.cs">
       <SubType>Form</SubType>

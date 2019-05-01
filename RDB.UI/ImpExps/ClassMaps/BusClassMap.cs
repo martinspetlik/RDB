@@ -9,8 +9,8 @@ namespace RDB.UI.ImpExps.ClassMaps
 
         public BusClassMap()
         {
-            Map(m => m.ModelName);
-            Map(m => m.Plate);
+            Map(m => m.Plate).Index(0);
+            Map(m => m.ModelName).Index(1);
         }
 
         #endregion

@@ -9,9 +9,9 @@ namespace RDB.UI.ImpExps.ClassMaps
 
         public ClientClassMap()
         {
-            Map(m => m.Email);
-            Map(m => m.Firstname);
-            Map(m => m.Surname); 
+            Map(m => m.Email).Index(0);
+            Map(m => m.Firstname).Index(1);
+            Map(m => m.Surname).Index(2); 
         }
 
         #endregion

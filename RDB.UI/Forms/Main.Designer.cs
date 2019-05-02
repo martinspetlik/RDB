@@ -46,6 +46,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.zip_ch_e = new System.Windows.Forms.CheckBox();
             this.preview_bt = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.panel4 = new System.Windows.Forms.Panel();
@@ -56,7 +57,11 @@
             this.tables_cb_e = new System.Windows.Forms.ComboBox();
             this.export_bt = new System.Windows.Forms.Button();
             this.preview_e = new System.Windows.Forms.ListView();
-            this.zip_ch_e = new System.Windows.Forms.CheckBox();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.vymaz_bt = new System.Windows.Forms.Button();
+            this.mark_bt = new System.Windows.Forms.Button();
+            this.check_bt = new System.Windows.Forms.Button();
+            this.result_lb = new System.Windows.Forms.Label();
             this.tabs.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -64,12 +69,14 @@
             this.tabPage2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabs
             // 
             this.tabs.Controls.Add(this.tabPage1);
             this.tabs.Controls.Add(this.tabPage2);
+            this.tabs.Controls.Add(this.tabPage3);
             this.tabs.Location = new System.Drawing.Point(12, 12);
             this.tabs.Name = "tabs";
             this.tabs.SelectedIndex = 0;
@@ -255,6 +262,16 @@
             this.panel3.Size = new System.Drawing.Size(572, 240);
             this.panel3.TabIndex = 1;
             // 
+            // zip_ch_e
+            // 
+            this.zip_ch_e.AutoSize = true;
+            this.zip_ch_e.Location = new System.Drawing.Point(6, 5);
+            this.zip_ch_e.Name = "zip_ch_e";
+            this.zip_ch_e.Size = new System.Drawing.Size(76, 17);
+            this.zip_ch_e.TabIndex = 41;
+            this.zip_ch_e.Text = "Soubor zip";
+            this.zip_ch_e.UseVisualStyleBackColor = true;
+            // 
             // preview_bt
             // 
             this.preview_bt.Location = new System.Drawing.Point(6, 159);
@@ -353,15 +370,58 @@
             this.preview_e.TabIndex = 33;
             this.preview_e.UseCompatibleStateImageBehavior = false;
             // 
-            // zip_ch_e
+            // tabPage3
             // 
-            this.zip_ch_e.AutoSize = true;
-            this.zip_ch_e.Location = new System.Drawing.Point(6, 5);
-            this.zip_ch_e.Name = "zip_ch_e";
-            this.zip_ch_e.Size = new System.Drawing.Size(76, 17);
-            this.zip_ch_e.TabIndex = 41;
-            this.zip_ch_e.Text = "Soubor zip";
-            this.zip_ch_e.UseVisualStyleBackColor = true;
+            this.tabPage3.Controls.Add(this.result_lb);
+            this.tabPage3.Controls.Add(this.check_bt);
+            this.tabPage3.Controls.Add(this.mark_bt);
+            this.tabPage3.Controls.Add(this.vymaz_bt);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(572, 240);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Označování";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // vymaz_bt
+            // 
+            this.vymaz_bt.Location = new System.Drawing.Point(65, 88);
+            this.vymaz_bt.Name = "vymaz_bt";
+            this.vymaz_bt.Size = new System.Drawing.Size(127, 64);
+            this.vymaz_bt.TabIndex = 0;
+            this.vymaz_bt.Text = "Vymazat databázi";
+            this.vymaz_bt.UseVisualStyleBackColor = true;
+            this.vymaz_bt.Click += new System.EventHandler(this.vymaz_bt_Click);
+            // 
+            // mark_bt
+            // 
+            this.mark_bt.Location = new System.Drawing.Point(212, 88);
+            this.mark_bt.Name = "mark_bt";
+            this.mark_bt.Size = new System.Drawing.Size(127, 64);
+            this.mark_bt.TabIndex = 1;
+            this.mark_bt.Text = "Označit data";
+            this.mark_bt.UseVisualStyleBackColor = true;
+            this.mark_bt.Click += new System.EventHandler(this.mark_bt_Click);
+            // 
+            // check_bt
+            // 
+            this.check_bt.Location = new System.Drawing.Point(356, 88);
+            this.check_bt.Name = "check_bt";
+            this.check_bt.Size = new System.Drawing.Size(127, 64);
+            this.check_bt.TabIndex = 2;
+            this.check_bt.Text = "Kontrola dat";
+            this.check_bt.UseVisualStyleBackColor = true;
+            this.check_bt.Click += new System.EventHandler(this.check_bt_Click);
+            // 
+            // result_lb
+            // 
+            this.result_lb.AutoSize = true;
+            this.result_lb.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.result_lb.Location = new System.Drawing.Point(192, 197);
+            this.result_lb.Name = "result_lb";
+            this.result_lb.Size = new System.Drawing.Size(0, 26);
+            this.result_lb.TabIndex = 3;
             // 
             // Main
             // 
@@ -385,6 +445,8 @@
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -420,6 +482,11 @@
         private System.Windows.Forms.Button preview_bt;
         private System.Windows.Forms.CheckBox zip_ch;
         private System.Windows.Forms.CheckBox zip_ch_e;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.Label result_lb;
+        private System.Windows.Forms.Button check_bt;
+        private System.Windows.Forms.Button mark_bt;
+        private System.Windows.Forms.Button vymaz_bt;
     }
 }
 

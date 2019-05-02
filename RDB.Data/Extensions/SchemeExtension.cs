@@ -27,11 +27,10 @@ namespace RDB.Data.Extensions
         public static List<Column> GetTableColumns(this DefaultContext defaultContext, String tableName)
         {
             List<Column> columns = new List<Column>();
-
             DataRowCollection rows = defaultContext.Database.Connection.GetSchema("Columns", new String[] { "", "", tableName, "" }).Rows;
             foreach (DataRow row in rows)
             {
-                columns.Add(new Column(row));
+                    columns.Add(new Column(row));
             }
 
             return columns;

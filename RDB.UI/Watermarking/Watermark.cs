@@ -1,11 +1,13 @@
 ﻿using RDB.Data.DAL;
+using RDB.Data.Models;
 using System;
 using System.Drawing;
 using System.Text;
 using System.IO;
-using RDB.Data.Models;
 using System.Collections;
+using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Windows.Forms;
 using System.Linq;
 using RDB.Data.Extensions;
 
@@ -15,6 +17,7 @@ namespace RDB.UI.Watermarking
     public class Watermark
     {
         private readonly DefaultContext defaultContext;
+        private static double probability = 0.65;
         private int imageRowSize;
         private int imageColumnSize;
         // Fraction of items that can be marked
@@ -112,43 +115,50 @@ namespace RDB.UI.Watermarking
 
         public void Watermarking()
         {
-            String updateCommand = String.Empty;
-
-            Drive[] drives = defaultContext.Drives.ToArray();
-            foreach (Drive drive in drives)
+            if (checkWatermark() <= probability)
             {
-                string primaryKey = this.GetPKString(drive);
-                // Hash from primary key + our 'secret' key
-                var hash = this.CreateHash(String.Concat(this.secretKey, primaryKey));
-
-                if (hash % this.fraction == 0)
+                try
                 {
-                    var bitIndex = hash % this.lsbCandidates;
-                    bool watermarkBit = this.GetWatermarkBit(hash);
-                    Int32 seconds = (int)((DateTimeOffset)drive.Time).ToUnixTimeSeconds();
+                    foreach (Drive drive in this.defaultContext.Drives)
+                    {
+                        string primaryKey = this.GetPKString(drive);
+                        // Hash from primary key + our 'secret' key
+                        var hash = this.CreateHash(String.Concat(this.secretKey, primaryKey));
 
-                    BitArray secondBits = new BitArray(new int[] { seconds });
-                    secondBits[bitIndex] = watermarkBit;
+                        if (hash % this.fraction == 0)
+                        {
+                            var bitIndex = hash % this.lsbCandidates;
+                            bool watermarkBit = this.GetWatermarkBit(hash);
+                            Int32 seconds = (int)((DateTimeOffset)drive.Time).ToUnixTimeSeconds();
 
-                    int[] array = new int[4];
-                    secondBits.CopyTo(array, 0);
-                    int newSeconds = array[0];
+                            BitArray secondBits = new BitArray(new int[] { seconds });
+                            secondBits[bitIndex] = watermarkBit;
+
+                            int[] array = new int[4];
+                            secondBits.CopyTo(array, 0);
+                            int newSeconds = array[0];
 
                     updateCommand += $"UPDATE Jizda SET cas = FROM_UNIXTIME({drive.Time.AddSeconds(newSeconds - seconds).ToTimestamp()}) WHERE linka = '{drive.RouteNumber}' AND cas = FROM_UNIXTIME({drive.Time.ToTimestamp()}); GO;";
                     //drive.Time = drive.Time.AddSeconds(newSeconds - seconds);
                 }
             }
 
-
-
-            //defaultContext.Database.ExecuteSqlCommand(updateCommand);
-
+                    }
+                    MessageBox.Show("Data označena!");
+                }
+                catch(Exception e)
+                {
+                    MessageBox.Show("Označení dat se nepodařilo!");
+                }
+            }
+            else
+                MessageBox.Show("Data již byla označena!");
             //this.changeData();
-            this.checkWatermark();
+            //this.checkWatermark();
         }
 
 
-        public void checkWatermark()
+        private float checkWatermark()
         {
             int totalCount = 0;
             int matchCount = 0;
@@ -176,9 +186,17 @@ namespace RDB.UI.Watermarking
                     }
                 }
 
-            }
+                }
+            var ratio = (float)matchCount / (float)totalCount;
+            return ratio;
+        }
 
-            Console.WriteLine("Watermarked " + ((float)matchCount / (float)totalCount));
+        public bool IsDataOurs()
+        {
+            if (checkWatermark() <= probability)
+                return false;
+            else
+                return true;
         }
 
 

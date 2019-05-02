@@ -3,6 +3,7 @@ using RDB.Data.Models.Scheme;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 
 namespace RDB.Data.Extensions
 {
@@ -33,7 +34,7 @@ namespace RDB.Data.Extensions
                     columns.Add(new Column(row));
             }
 
-            return columns;
+            return columns.OrderBy(c => c.Order).ToList();
         }
 
         #endregion

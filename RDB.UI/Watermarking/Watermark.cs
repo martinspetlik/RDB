@@ -5,30 +5,57 @@ using System.Drawing;
 using System.Text;
 using System.IO;
 using System.Collections;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 using System.Linq;
 using RDB.Data.Extensions;
+using MySql.Data.MySqlClient;
+using System.Configuration;
+using RDB.UI.Watermarking.Models;
 
 namespace RDB.UI.Watermarking
 {
     // http://iranarze.ir/wp-content/uploads/2017/08/7338-English-IranArze.pdf
     public class Watermark
     {
+        #region Constants
+
+        private static double MINIMUM_PROBABILITY = 0.65;
+
+        #endregion
+
+        #region Fields
+
         private readonly DefaultContext defaultContext;
-        private static double probability = 0.65;
+
+        /// <summary>
+        /// Fraction of items that can be marked
+        /// </summary>
+        private readonly int fraction;
+
+        /// <summary>
+        /// Number of LSB candidate bits to be modified
+        /// </summary>
+        private readonly int lsbCandidates;
+
+        /// <summary>
+        /// Secrete key
+        /// </summary>
+        private readonly int secretKey;
+
+        private readonly BitArray[] imageBitMatrix;
+
+        #endregion
+
+        #region Private Fields
+
         private int imageRowSize;
+
         private int imageColumnSize;
-        // Fraction of items that can be marked
-        private int fraction;
-        // Number of LSB candidate bits to be modified
-        private int lsbCandidates;
-        // Secrete key
-        private int secretKey;
 
-        private BitArray[] imageBitMatrix;
+        #endregion
 
+        #region Constructors
 
         public Watermark(DefaultContext defaultContext)
         {
@@ -39,87 +66,20 @@ namespace RDB.UI.Watermarking
             this.secretKey = 5674932;
         }
 
+        #endregion
 
-        public BitArray[] ProcessImage(String imagePath)
+        #region Public methods
+
+        public void MarkData()
         {
-
-            BitArray bits = new BitArray(File.ReadAllBytes(imagePath));
-            // Should be from image variable
-            this.imageRowSize = 1176;
-            this.imageColumnSize = 71;
-
-
-            return this.BitsToMatrix(bits, imageRowSize, imageColumnSize);
-
-        }
-
-
-        public byte[] LoadImage(Image imageIn)
-        {
-            using (var ms = new MemoryStream())
-            {
-                imageIn.Save(ms, imageIn.RawFormat);
-                return ms.ToArray();
-
-            }
-        }
-
-
-        public BitArray[] BitsToMatrix(BitArray Input, int rowSize, int columnSize)
-        {
-            BitArray[] Output = new BitArray[rowSize];
-
-            for (int i = 0; i < rowSize; i += 1)
-            {
-                BitArray bitsRow = new BitArray(columnSize);
-                for (int j = 0; j < columnSize; j++)
-                {
-                    bitsRow.Set(j, Input.Get((i * columnSize) + j));
-                }
-
-                Output.SetValue(bitsRow, i);
-            }
-            return Output;
-        }
-
-
-        public String GetPKString(Drive drive)
-        {
-            // Join all primary key attributes
-            string[] primaryKeys = new String[] { drive.RouteNumber, drive.BusPlate };
-            return String.Join("", primaryKeys);
-        }
-
-
-        private bool GetWatermarkBit(int hash)
-        {
-            // New indicies to image matrix
-            int imageRowIndex = hash % this.imageRowSize;
-            int imageColumnIndex = hash % this.imageColumnSize;
-
-            // Row in bit matrix
-            BitArray row = (BitArray)this.imageBitMatrix.GetValue(imageRowIndex);
-            // String from bits in selected row
-            string rowValue = this.BitArrayToString(row);
-            // String from bits in selected column
-            string columnValue = this.GetColumnValue(this.imageBitMatrix, imageColumnIndex);
-
-            int rIndex = this.CreateHash(String.Concat(hash, rowValue)) % imageRowSize;
-            int cIndex = this.CreateHash(String.Concat(hash, columnValue)) % imageColumnSize;
-
-            BitArray finalRow = (BitArray)this.imageBitMatrix.GetValue(rIndex);
-
-            return finalRow[cIndex];
-        }
-
-
-        public void Watermarking()
-        {
-            if (checkWatermark() <= probability)
+            if (CheckWatermark() <= MINIMUM_PROBABILITY)
             {
                 try
                 {
-                    foreach (Drive drive in this.defaultContext.Drives)
+                    String updateCommand = String.Empty;
+
+                    Drive[] drives = defaultContext.Drives.AsNoTracking().ToArray();
+                    foreach (Drive drive in drives)
                     {
                         string primaryKey = this.GetPKString(drive);
                         // Hash from primary key + our 'secret' key
@@ -138,15 +98,28 @@ namespace RDB.UI.Watermarking
                             secondBits.CopyTo(array, 0);
                             int newSeconds = array[0];
 
-                    updateCommand += $"UPDATE Jizda SET cas = FROM_UNIXTIME({drive.Time.AddSeconds(newSeconds - seconds).ToTimestamp()}) WHERE linka = '{drive.RouteNumber}' AND cas = FROM_UNIXTIME({drive.Time.ToTimestamp()}); GO;";
-                    //drive.Time = drive.Time.AddSeconds(newSeconds - seconds);
-                }
-            }
-
+                            updateCommand += $"UPDATE Jizda SET cas = FROM_UNIXTIME({drive.Time.AddSeconds(newSeconds - seconds).ToTimestamp()}) WHERE linka = '{drive.RouteNumber}' AND cas = FROM_UNIXTIME({drive.Time.ToTimestamp()}); ";
+                        }
                     }
-                    MessageBox.Show("Data označena!");
+
+                    Int32 rowsUpdatedCount = 0;
+                    using (MySqlConnection mySqlConnection = new MySqlConnection(ConfigurationManager.ConnectionStrings["DefaultContext"].ConnectionString))
+                    {
+                        MySqlCommand sqlCommand = new MySqlCommand();
+                        sqlCommand.Connection = mySqlConnection;
+                        sqlCommand.CommandText = updateCommand;
+                        mySqlConnection.Open();
+
+                        rowsUpdatedCount = sqlCommand.ExecuteNonQuery();
+                        sqlCommand.Dispose();
+
+                        mySqlConnection.Close();
+                        mySqlConnection.Dispose();
+                    }
+
+                    MessageBox.Show($"Data označena (celkem označeno {rowsUpdatedCount} zaznamu)!");
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     MessageBox.Show("Označení dat se nepodařilo!");
                 }
@@ -154,16 +127,24 @@ namespace RDB.UI.Watermarking
             else
                 MessageBox.Show("Data již byla označena!");
             //this.changeData();
-            //this.checkWatermark();
+            //this.CheckWatermark();
         }
 
+        public ResultModel IsDataOurs()
+        {
+            return new ResultModel(CheckWatermark(), MINIMUM_PROBABILITY);
+        }
 
-        private float checkWatermark()
+        #endregion
+
+        #region Private methods
+
+        private float CheckWatermark()
         {
             int totalCount = 0;
             int matchCount = 0;
 
-            Drive[] drives = defaultContext.Drives.ToArray();
+            Drive[] drives = defaultContext.Drives.AsNoTracking().ToArray();
             foreach (Drive drive in drives)
             {
                 string primaryKey = this.GetPKString(drive);
@@ -186,26 +167,84 @@ namespace RDB.UI.Watermarking
                     }
                 }
 
-                }
+            }
             var ratio = (float)matchCount / (float)totalCount;
             return ratio;
         }
 
-        public bool IsDataOurs()
+        private BitArray[] ProcessImage(String imagePath)
         {
-            if (checkWatermark() <= probability)
-                return false;
-            else
-                return true;
+
+            BitArray bits = new BitArray(File.ReadAllBytes(imagePath));
+            // Should be from image variable
+            this.imageRowSize = 1176;
+            this.imageColumnSize = 71;
+
+
+            return this.BitsToMatrix(bits, imageRowSize, imageColumnSize);
+
         }
 
+        private byte[] LoadImage(Image imageIn)
+        {
+            using (var ms = new MemoryStream())
+            {
+                imageIn.Save(ms, imageIn.RawFormat);
+                return ms.ToArray();
 
-        public int CreateHash(string text)
+            }
+        }
+
+        private BitArray[] BitsToMatrix(BitArray Input, int rowSize, int columnSize)
+        {
+            BitArray[] Output = new BitArray[rowSize];
+
+            for (int i = 0; i < rowSize; i += 1)
+            {
+                BitArray bitsRow = new BitArray(columnSize);
+                for (int j = 0; j < columnSize; j++)
+                {
+                    bitsRow.Set(j, Input.Get((i * columnSize) + j));
+                }
+
+                Output.SetValue(bitsRow, i);
+            }
+            return Output;
+        }
+
+        private String GetPKString(Drive drive)
+        {
+            // Join all primary key attributes
+            string[] primaryKeys = new String[] { drive.RouteNumber, drive.BusPlate };
+            return String.Join("", primaryKeys);
+        }
+
+        private bool GetWatermarkBit(int hash)
+        {
+            // New indicies to image matrix
+            int imageRowIndex = hash % this.imageRowSize;
+            int imageColumnIndex = hash % this.imageColumnSize;
+
+            // Row in bit matrix
+            BitArray row = (BitArray)this.imageBitMatrix.GetValue(imageRowIndex);
+            // String from bits in selected row
+            string rowValue = this.BitArrayToString(row);
+            // String from bits in selected column
+            string columnValue = this.GetColumnValue(this.imageBitMatrix, imageColumnIndex);
+
+            int rIndex = this.CreateHash(String.Concat(hash, rowValue)) % imageRowSize;
+            int cIndex = this.CreateHash(String.Concat(hash, columnValue)) % imageColumnSize;
+
+            BitArray finalRow = (BitArray)this.imageBitMatrix.GetValue(rIndex);
+
+            return finalRow[cIndex];
+        }
+
+        private int CreateHash(string text)
         {
             MD5 md5Hash = MD5.Create();
             var hash = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(text));
             return Math.Abs(BitConverter.ToInt32(hash, 0)); // Must be positive
-
         }
 
 
@@ -246,7 +285,7 @@ namespace RDB.UI.Watermarking
         //}
 
 
-        public string GetColumnValue(BitArray[] bitMatrix, int index)
+        private string GetColumnValue(BitArray[] bitMatrix, int index)
         {
             BitArray columnBits = new BitArray(bitMatrix.Length);
             for (int i = 0; i < bitMatrix.Length; i++)
@@ -258,8 +297,7 @@ namespace RDB.UI.Watermarking
             return this.BitArrayToString(columnBits);
         }
 
-
-        public string BitArrayToString(BitArray bits)
+        private string BitArrayToString(BitArray bits)
         {
             char[] charBits = new char[bits.Count];
 
@@ -278,5 +316,7 @@ namespace RDB.UI.Watermarking
 
             return new string(charBits);
         }
+
+        #endregion
     }
 }

@@ -56,7 +56,7 @@ alter table `Trasy` add constraint `FK_Trasy_Lokalita_odkud`  foreign key (`odku
 alter table `Mezizastavka` add constraint `FK_Mezizastavka_Lokalita_nazev`  foreign key (`nazev`) references `Lokalita` ( `nazev`)  on update cascade on delete cascade ;
 alter table `Mezizastavka` add constraint `FK_Mezizastavka_Trasy_linka`  foreign key (`linka`) references `Trasy` ( `linka`)  on update cascade on delete cascade ;
 alter table `Jizdenka` add constraint `FK_Jizdenka_Klient_email`  foreign key (`email`) references `Klient` ( `email`) ;
-alter table `Jizdenka` add constraint `FK_Jizdenka_Jizda_cas_linka`  foreign key (`cas`,`linka`) references `Jizda` ( `cas`,`linka`) ;
+alter table `Jizdenka` add constraint `FK_Jizdenka_Jizda_cas_linka`  foreign key (`cas`,`linka`) references `Jizda` ( `cas`,`linka`)  on update cascade on delete cascade ;
 create table `__MigrationHistory` (`MigrationId` nvarchar(150)  not null ,`ContextKey` nvarchar(300)  not null ,`Model` longblob not null ,`ProductVersion` nvarchar(32)  not null ,primary key ( `MigrationId`) ) engine=InnoDb auto_increment=0;
 INSERT INTO `__MigrationHistory`(
 `MigrationId`, 

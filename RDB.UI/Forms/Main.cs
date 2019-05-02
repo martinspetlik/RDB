@@ -4,6 +4,7 @@ using RDB.Data.Extensions;
 using RDB.Data.Models;
 using RDB.UI.ImpExps;
 using RDB.UI.Watermarking;
+using RDB.UI.Watermarking.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,7 +70,7 @@ namespace RDB.UI.Forms
 
         private void tables_cb_SelectedValueChanged(object sender, EventArgs e)
         {
-            if(import != null)
+            if (import != null)
                 import.TableName = tables_cb.Text;
         }
 
@@ -102,7 +103,7 @@ namespace RDB.UI.Forms
         }
         #endregion
 
-        
+
 
         private void vymaz_bt_Click(object sender, EventArgs e)
         {
@@ -119,10 +120,10 @@ namespace RDB.UI.Forms
                 defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE lokalita;SET FOREIGN_KEY_CHECKS = 1;");
                 defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE znacka;SET FOREIGN_KEY_CHECKS = 1;");
                 defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE typkontaktu;SET FOREIGN_KEY_CHECKS = 1;");
-   
+
                 MessageBox.Show("Data byla smazána");
             }
-            catch(MySqlException ex)
+            catch (MySqlException ex)
             {
                 MessageBox.Show("Vyskytla se chyba: " + ex);
             }
@@ -132,13 +133,14 @@ namespace RDB.UI.Forms
 
         private void mark_bt_Click(object sender, EventArgs e)
         {
-            marker.Watermarking();
+            marker.MarkData();
         }
 
         private void check_bt_Click(object sender, EventArgs e)
         {
-            if (marker.IsDataOurs())
-                result_lb.Text = "Toto jsou naše data";
+            ResultModel watermarkResult = marker.IsDataOurs();
+            if (watermarkResult.Result)
+                result_lb.Text = $"Toto jsou naše data na {watermarkResult.PercentageResult}";
             else
                 result_lb.Text = "Toto nejsou naše data";
         }
@@ -146,6 +148,5 @@ namespace RDB.UI.Forms
         #endregion
 
         #endregion
-
     }
 }

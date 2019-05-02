@@ -58,10 +58,10 @@
             this.export_bt = new System.Windows.Forms.Button();
             this.preview_e = new System.Windows.Forms.ListView();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.vymaz_bt = new System.Windows.Forms.Button();
-            this.mark_bt = new System.Windows.Forms.Button();
-            this.check_bt = new System.Windows.Forms.Button();
             this.result_lb = new System.Windows.Forms.Label();
+            this.check_bt = new System.Windows.Forms.Button();
+            this.mark_bt = new System.Windows.Forms.Button();
+            this.vymaz_bt = new System.Windows.Forms.Button();
             this.tabs.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -384,25 +384,15 @@
             this.tabPage3.Text = "Označování";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // vymaz_bt
+            // result_lb
             // 
-            this.vymaz_bt.Location = new System.Drawing.Point(65, 88);
-            this.vymaz_bt.Name = "vymaz_bt";
-            this.vymaz_bt.Size = new System.Drawing.Size(127, 64);
-            this.vymaz_bt.TabIndex = 0;
-            this.vymaz_bt.Text = "Vymazat databázi";
-            this.vymaz_bt.UseVisualStyleBackColor = true;
-            this.vymaz_bt.Click += new System.EventHandler(this.vymaz_bt_Click);
-            // 
-            // mark_bt
-            // 
-            this.mark_bt.Location = new System.Drawing.Point(212, 88);
-            this.mark_bt.Name = "mark_bt";
-            this.mark_bt.Size = new System.Drawing.Size(127, 64);
-            this.mark_bt.TabIndex = 1;
-            this.mark_bt.Text = "Označit data";
-            this.mark_bt.UseVisualStyleBackColor = true;
-            this.mark_bt.Click += new System.EventHandler(this.mark_bt_Click);
+            this.result_lb.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.result_lb.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.result_lb.Location = new System.Drawing.Point(3, 211);
+            this.result_lb.Name = "result_lb";
+            this.result_lb.Size = new System.Drawing.Size(566, 26);
+            this.result_lb.TabIndex = 3;
+            this.result_lb.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // check_bt
             // 
@@ -414,14 +404,25 @@
             this.check_bt.UseVisualStyleBackColor = true;
             this.check_bt.Click += new System.EventHandler(this.check_bt_Click);
             // 
-            // result_lb
+            // mark_bt
             // 
-            this.result_lb.AutoSize = true;
-            this.result_lb.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.result_lb.Location = new System.Drawing.Point(192, 197);
-            this.result_lb.Name = "result_lb";
-            this.result_lb.Size = new System.Drawing.Size(0, 26);
-            this.result_lb.TabIndex = 3;
+            this.mark_bt.Location = new System.Drawing.Point(212, 88);
+            this.mark_bt.Name = "mark_bt";
+            this.mark_bt.Size = new System.Drawing.Size(127, 64);
+            this.mark_bt.TabIndex = 1;
+            this.mark_bt.Text = "Označit data";
+            this.mark_bt.UseVisualStyleBackColor = true;
+            this.mark_bt.Click += new System.EventHandler(this.mark_bt_Click);
+            // 
+            // vymaz_bt
+            // 
+            this.vymaz_bt.Location = new System.Drawing.Point(65, 88);
+            this.vymaz_bt.Name = "vymaz_bt";
+            this.vymaz_bt.Size = new System.Drawing.Size(127, 64);
+            this.vymaz_bt.TabIndex = 0;
+            this.vymaz_bt.Text = "Vymazat databázi";
+            this.vymaz_bt.UseVisualStyleBackColor = true;
+            this.vymaz_bt.Click += new System.EventHandler(this.vymaz_bt_Click);
             // 
             // Main
             // 
@@ -446,7 +447,6 @@
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
             this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
             this.ResumeLayout(false);
 
         }

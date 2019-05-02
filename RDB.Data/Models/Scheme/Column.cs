@@ -11,6 +11,8 @@ namespace RDB.Data.Models.Scheme
 
         public String Type { get; set; }
 
+        public Int16 Order { get; set; }
+
         public Boolean IsString
         {
             get
@@ -35,6 +37,7 @@ namespace RDB.Data.Models.Scheme
         public Column(DataRow dataRow)
         {
             Name = dataRow[3].ToString();
+            Order = Int16.Parse(dataRow[4].ToString());
             Type = dataRow[7].ToString();
         }
 

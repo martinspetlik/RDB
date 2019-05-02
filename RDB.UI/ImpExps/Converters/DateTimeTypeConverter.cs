@@ -2,7 +2,7 @@
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
 using System;
-using System.Globalization;
+using static RDB.Data.Extensions.DateTimeExtension;
 
 namespace RDB.UI.ImpExps.Converters
 {
@@ -13,11 +13,7 @@ namespace RDB.UI.ImpExps.Converters
         public override String ConvertToString(Object value, IWriterRow row, MemberMapData memberMapData)
         {
             if (value != null && value is DateTime)
-            {
-                var unixTime = ((DateTime)value).ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-                
-                return (unixTime.TotalMilliseconds / 1000).ToString("0.0####", new CultureInfo("en-US"));
-            }
+                return ((DateTime)value).ToTimestamp();
 
             return "\\N";
         }

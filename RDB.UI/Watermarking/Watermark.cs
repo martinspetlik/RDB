@@ -6,6 +6,8 @@ using System.IO;
 using RDB.Data.Models;
 using System.Collections;
 using System.Security.Cryptography;
+using System.Linq;
+using RDB.Data.Extensions;
 
 namespace RDB.UI.Watermarking
 {
@@ -29,14 +31,14 @@ namespace RDB.UI.Watermarking
         {
             this.imageBitMatrix = this.ProcessImage("Watermarking/random_image.jpg");
             this.defaultContext = defaultContext;
-            this.fraction = 1; 
-            this.lsbCandidates = 3; 
+            this.fraction = 1;
+            this.lsbCandidates = 3;
             this.secretKey = 5674932;
         }
 
 
         public BitArray[] ProcessImage(String imagePath)
-        { 
+        {
 
             BitArray bits = new BitArray(File.ReadAllBytes(imagePath));
             // Should be from image variable
@@ -69,7 +71,7 @@ namespace RDB.UI.Watermarking
                 BitArray bitsRow = new BitArray(columnSize);
                 for (int j = 0; j < columnSize; j++)
                 {
-                    bitsRow.Set(j, Input.Get((i*columnSize) + j));
+                    bitsRow.Set(j, Input.Get((i * columnSize) + j));
                 }
 
                 Output.SetValue(bitsRow, i);
@@ -110,10 +112,11 @@ namespace RDB.UI.Watermarking
 
         public void Watermarking()
         {
+            String updateCommand = String.Empty;
 
-            foreach (Drive drive in this.defaultContext.Drives)
+            Drive[] drives = defaultContext.Drives.ToArray();
+            foreach (Drive drive in drives)
             {
-
                 string primaryKey = this.GetPKString(drive);
                 // Hash from primary key + our 'secret' key
                 var hash = this.CreateHash(String.Concat(this.secretKey, primaryKey));
@@ -131,10 +134,14 @@ namespace RDB.UI.Watermarking
                     secondBits.CopyTo(array, 0);
                     int newSeconds = array[0];
 
-                    drive.Time = drive.Time.AddSeconds(newSeconds - seconds);
+                    updateCommand += $"UPDATE Jizda SET cas = FROM_UNIXTIME({drive.Time.AddSeconds(newSeconds - seconds).ToTimestamp()}) WHERE linka = '{drive.RouteNumber}' AND cas = FROM_UNIXTIME({drive.Time.ToTimestamp()}); GO;";
+                    //drive.Time = drive.Time.AddSeconds(newSeconds - seconds);
                 }
-
             }
+
+
+
+            //defaultContext.Database.ExecuteSqlCommand(updateCommand);
 
             //this.changeData();
             this.checkWatermark();
@@ -146,30 +153,31 @@ namespace RDB.UI.Watermarking
             int totalCount = 0;
             int matchCount = 0;
 
-            foreach (Drive drive in defaultContext.Drives)
+            Drive[] drives = defaultContext.Drives.ToArray();
+            foreach (Drive drive in drives)
             {
-                    string primaryKey = this.GetPKString(drive);
+                string primaryKey = this.GetPKString(drive);
 
-                    // Hash from primary key + our 'secret' key
-                    var hash = this.CreateHash(String.Concat(this.secretKey, primaryKey));
+                // Hash from primary key + our 'secret' key
+                var hash = this.CreateHash(String.Concat(this.secretKey, primaryKey));
 
-                    if (hash % this.fraction == 0)
+                if (hash % this.fraction == 0)
+                {
+                    var bitIndex = hash % this.lsbCandidates;
+                    bool watermarkBit = this.GetWatermarkBit(hash);
+
+                    Int32 seconds = (int)((DateTimeOffset)drive.Time).ToUnixTimeSeconds();
+                    BitArray secondBits = new BitArray(new int[] { seconds });
+
+                    totalCount++;
+                    if (secondBits[bitIndex] == watermarkBit)
                     {
-                        var bitIndex = hash % this.lsbCandidates;
-                        bool watermarkBit = this.GetWatermarkBit(hash);
-
-                        Int32 seconds = (int)((DateTimeOffset)drive.Time).ToUnixTimeSeconds();
-                        BitArray secondBits = new BitArray(new int[] { seconds });
-                        
-                        totalCount++;
-                        if (secondBits[bitIndex] == watermarkBit)
-                        {
-                            matchCount++;
-                        }
+                        matchCount++;
                     }
-
                 }
-                
+
+            }
+
             Console.WriteLine("Watermarked " + ((float)matchCount / (float)totalCount));
         }
 

@@ -7,7 +7,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
-
+using System.Windows.Forms;
 
 namespace RDB.UI.Watermarking
 {
@@ -15,6 +15,7 @@ namespace RDB.UI.Watermarking
     public class Watermark
     {
         private readonly DefaultContext defaultContext;
+        private static double probability = 0.65;
         private int imageRowSize;
         private int imageColumnSize;
         // Fraction of items that can be marked
@@ -112,38 +113,48 @@ namespace RDB.UI.Watermarking
 
         public void Watermarking()
         {
-
-            foreach (Drive drive in this.defaultContext.Drives)
+            if (checkWatermark() <= probability)
             {
-
-                string primaryKey = this.GetPKString(drive);
-                // Hash from primary key + our 'secret' key
-                var hash = this.CreateHash(String.Concat(this.secretKey, primaryKey));
-
-                if (hash % this.fraction == 0)
+                try
                 {
-                    var bitIndex = hash % this.lsbCandidates;
-                    bool watermarkBit = this.GetWatermarkBit(hash);
-                    Int32 seconds = (int)((DateTimeOffset)drive.Time).ToUnixTimeSeconds();
+                    foreach (Drive drive in this.defaultContext.Drives)
+                    {
+                        string primaryKey = this.GetPKString(drive);
+                        // Hash from primary key + our 'secret' key
+                        var hash = this.CreateHash(String.Concat(this.secretKey, primaryKey));
 
-                    BitArray secondBits = new BitArray(new int[] { seconds });
-                    secondBits[bitIndex] = watermarkBit;
+                        if (hash % this.fraction == 0)
+                        {
+                            var bitIndex = hash % this.lsbCandidates;
+                            bool watermarkBit = this.GetWatermarkBit(hash);
+                            Int32 seconds = (int)((DateTimeOffset)drive.Time).ToUnixTimeSeconds();
 
-                    int[] array = new int[4];
-                    secondBits.CopyTo(array, 0);
-                    int newSeconds = array[0];
+                            BitArray secondBits = new BitArray(new int[] { seconds });
+                            secondBits[bitIndex] = watermarkBit;
 
-                    drive.Time = drive.Time.AddSeconds(newSeconds - seconds);
+                            int[] array = new int[4];
+                            secondBits.CopyTo(array, 0);
+                            int newSeconds = array[0];
+
+                            drive.Time = drive.Time.AddSeconds(newSeconds - seconds);
+                        }
+
+                    }
+                    MessageBox.Show("Data označena!");
                 }
-
+                catch(Exception e)
+                {
+                    MessageBox.Show("Označení dat se nepodařilo!");
+                }
             }
-
+            else
+                MessageBox.Show("Data již byla označena!");
             //this.changeData();
             //this.checkWatermark();
         }
 
 
-        public float checkWatermark()
+        private float checkWatermark()
         {
             int totalCount = 0;
             int matchCount = 0;
@@ -173,6 +184,14 @@ namespace RDB.UI.Watermarking
                 }
             var ratio = (float)matchCount / (float)totalCount;
             return ratio;
+        }
+
+        public bool IsDataOurs()
+        {
+            if (checkWatermark() <= probability)
+                return false;
+            else
+                return true;
         }
 
 

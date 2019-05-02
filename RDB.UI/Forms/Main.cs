@@ -1,4 +1,5 @@
-﻿using RDB.Data.DAL;
+﻿using MySql.Data.MySqlClient;
+using RDB.Data.DAL;
 using RDB.Data.Extensions;
 using RDB.UI.ImpExps;
 using RDB.UI.Watermarking;
@@ -18,6 +19,8 @@ namespace RDB.UI.Forms
 
         private readonly Export export;
 
+        private readonly Watermark marker;
+
         #endregion
 
         #region Constructors
@@ -28,12 +31,10 @@ namespace RDB.UI.Forms
 
             defaultContext = new DefaultContext();
 
-            Watermark marker = new Watermark(defaultContext);
-            marker.Watermarking();
-
             List<String> tableNames = defaultContext.GetScheme();
             import = new Import(defaultContext, tables_cb, tableNames);
             export = new Export(defaultContext, tables_cb_e, tableNames);
+            marker = new Watermark(defaultContext);
 
             export_bt.Enabled = true;
         }
@@ -98,6 +99,51 @@ namespace RDB.UI.Forms
                 tables_cb.Enabled = true;
         }
         #endregion
+
+        
+
+        private void vymaz_bt_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE jizdenka;SET FOREIGN_KEY_CHECKS = 1;");
+                defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE jizda;SET FOREIGN_KEY_CHECKS = 1;");
+                defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE mezizastavka;SET FOREIGN_KEY_CHECKS = 1;");
+                defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE autobus;SET FOREIGN_KEY_CHECKS = 1;");
+                defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE klient;SET FOREIGN_KEY_CHECKS = 1;");
+                defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE kontakt;SET FOREIGN_KEY_CHECKS = 1;");
+                defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE ridic;SET FOREIGN_KEY_CHECKS = 1;");
+                defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE trasy;SET FOREIGN_KEY_CHECKS = 1;");
+                defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE lokalita;SET FOREIGN_KEY_CHECKS = 1;");
+                defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE znacka;SET FOREIGN_KEY_CHECKS = 1;");
+                defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE typkontaktu;SET FOREIGN_KEY_CHECKS = 1;");
+   
+                MessageBox.Show("Data byla smazána");
+            }
+            catch(MySqlException ex)
+            {
+                MessageBox.Show("Vyskytla se chyba: " + ex);
+            }
+        }
+
+        #region Watermark events
+
+        private void mark_bt_Click(object sender, EventArgs e)
+        {
+            marker.Watermarking();
+        }
+
+        private void check_bt_Click(object sender, EventArgs e)
+        {
+            if (marker.IsDataOurs())
+                result_lb.Text = "Toto jsou naše data";
+            else
+                result_lb.Text = "Toto nejsou naše data";
+        }
+
         #endregion
+
+        #endregion
+
     }
 }

@@ -156,15 +156,19 @@ namespace RDB.UI.ImpExps
                 FilePath = baseDirectory + "/" + TableName + ".csv";
                 InsertColumns(defaultContext.GetTableColumns(TableName));
 
-                TableName = "jizdenka";
-                FilePath = baseDirectory + "/" + TableName + ".csv";
-                InsertColumns(defaultContext.GetTableColumns(TableName));
-
                 TableName = "trasy";
                 FilePath = baseDirectory + "/" + TableName + ".csv";
                 InsertColumns(defaultContext.GetTableColumns(TableName));
 
                 TableName = "jizda";
+                FilePath = baseDirectory + "/" + TableName + ".csv";
+                InsertColumns(defaultContext.GetTableColumns(TableName));
+
+                TableName = "jizdenka";
+                FilePath = baseDirectory + "/" + TableName + ".csv";
+                InsertColumns(defaultContext.GetTableColumns(TableName));
+
+                TableName = "mezizastavka";
                 FilePath = baseDirectory + "/" + TableName + ".csv";
                 InsertColumns(defaultContext.GetTableColumns(TableName));
             }

@@ -32,7 +32,7 @@ namespace RDB.UI.ImpExps
         public void ShowPreview(ListView preview)
         {
             if (!String.IsNullOrEmpty(TableName))
-                PreviewTable(defaultContext.GetTableColumns(TableName));
+                PreviewTable(defaultContext.GetTableColumns(TableName), preview);
         }
 
         public void SaveFile(RadioButton od_car_rad, RadioButton od_str_rad, RadioButton od_tab_rad, CheckBox zip_ch)
@@ -79,11 +79,13 @@ namespace RDB.UI.ImpExps
 
         #region Private methods
 
-        private void PreviewTable(List<Column> columns)
+        private void PreviewTable(List<Column> columns, ListView preview)
         {
             //int counter = 0;
             //string line;
-            string command = TableSelect(columns);
+            Preview p = new Preview();
+            p.Select(defaultContext, TableName, preview);
+
         }
 
         private string TableSelect(List<Column> columns)

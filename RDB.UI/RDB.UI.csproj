@@ -133,6 +133,7 @@
     </Compile>
     <Compile Include="ImpExps\ImpExpBase.cs" />
     <Compile Include="ImpExps\Import.cs" />
+    <Compile Include="ImpExps\Preview.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\Main.resx">

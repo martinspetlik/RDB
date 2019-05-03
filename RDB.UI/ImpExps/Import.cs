@@ -235,7 +235,7 @@ namespace RDB.UI.ImpExps
             {
                 Int32 count = InsertIntoTable(File.ReadAllLines(FilePath, Encoding.UTF8), columns);
 
-                MessageBox.Show($"Úspěšně vloženo {count} záznamů...");
+                MessageBox.Show($"{TableName}: Úspěšně vloženo {count} záznamů...");
             }
             catch (Exception e)
             {
@@ -262,7 +262,12 @@ namespace RDB.UI.ImpExps
                             if (columns.ElementAt(j).Type == "timestamp")
                                 command += "FROM_UNIXTIME(" + values[j] + ")";
                             else if (columns.ElementAt(j).IsString)
-                                command += values[j] == "\\N" ? "NULL" : $"'{values[j]}'";
+                            {
+                                if (values[j] == "\\N")
+                                    command += "NULL";
+                                else
+                                    command += $"'{values[j].Replace("\\n", "\\\\n")}'";                               
+                            }
                             else
                                 command += values[j];
 

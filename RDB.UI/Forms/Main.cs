@@ -40,6 +40,11 @@ namespace RDB.UI.Forms
             marker = new Watermark(defaultContext);
 
             export_bt.Enabled = true;
+            delete_pb.Visible = false;
+            delete_pb.Minimum = 1;
+            delete_pb.Maximum = 11;
+            delete_pb.Value = 1;
+            delete_pb.Step = 1;
         }
 
         #endregion
@@ -107,21 +112,34 @@ namespace RDB.UI.Forms
 
         private void vymaz_bt_Click(object sender, EventArgs e)
         {
+            delete_pb.Visible = true;
             try
             {
                 defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE jizdenka;SET FOREIGN_KEY_CHECKS = 1;");
+                delete_pb.PerformStep();
                 defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE jizda;SET FOREIGN_KEY_CHECKS = 1;");
+                delete_pb.PerformStep();
                 defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE mezizastavka;SET FOREIGN_KEY_CHECKS = 1;");
+                delete_pb.PerformStep();
                 defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE autobus;SET FOREIGN_KEY_CHECKS = 1;");
+                delete_pb.PerformStep();
                 defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE klient;SET FOREIGN_KEY_CHECKS = 1;");
+                delete_pb.PerformStep();
                 defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE kontakt;SET FOREIGN_KEY_CHECKS = 1;");
+                delete_pb.PerformStep();
                 defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE ridic;SET FOREIGN_KEY_CHECKS = 1;");
+                delete_pb.PerformStep();
                 defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE trasy;SET FOREIGN_KEY_CHECKS = 1;");
+                delete_pb.PerformStep();
                 defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE lokalita;SET FOREIGN_KEY_CHECKS = 1;");
+                delete_pb.PerformStep();
                 defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE znacka;SET FOREIGN_KEY_CHECKS = 1;");
+                delete_pb.PerformStep();
                 defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE typkontaktu;SET FOREIGN_KEY_CHECKS = 1;");
+                delete_pb.PerformStep();
 
                 MessageBox.Show("Data byla smazána");
+                delete_pb.Visible = false;
             }
             catch (MySqlException ex)
             {

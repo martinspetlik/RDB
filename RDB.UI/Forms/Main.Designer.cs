@@ -62,6 +62,7 @@
             this.check_bt = new System.Windows.Forms.Button();
             this.mark_bt = new System.Windows.Forms.Button();
             this.vymaz_bt = new System.Windows.Forms.Button();
+            this.delete_pb = new System.Windows.Forms.ProgressBar();
             this.tabs.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -372,6 +373,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.delete_pb);
             this.tabPage3.Controls.Add(this.result_lb);
             this.tabPage3.Controls.Add(this.check_bt);
             this.tabPage3.Controls.Add(this.mark_bt);
@@ -423,6 +425,13 @@
             this.vymaz_bt.Text = "Vymazat databázi";
             this.vymaz_bt.UseVisualStyleBackColor = true;
             this.vymaz_bt.Click += new System.EventHandler(this.vymaz_bt_Click);
+            // 
+            // delete_pb
+            // 
+            this.delete_pb.Location = new System.Drawing.Point(8, 185);
+            this.delete_pb.Name = "delete_pb";
+            this.delete_pb.Size = new System.Drawing.Size(560, 23);
+            this.delete_pb.TabIndex = 4;
             // 
             // Main
             // 
@@ -487,6 +496,7 @@
         private System.Windows.Forms.Button check_bt;
         private System.Windows.Forms.Button mark_bt;
         private System.Windows.Forms.Button vymaz_bt;
+        private System.Windows.Forms.ProgressBar delete_pb;
     }
 }
 

@@ -113,6 +113,7 @@ namespace RDB.UI.Forms
         private void vymaz_bt_Click(object sender, EventArgs e)
         {
             delete_pb.Visible = true;
+            delete_pb.Value = 1;
             try
             {
                 defaultContext.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE jizdenka;SET FOREIGN_KEY_CHECKS = 1;");

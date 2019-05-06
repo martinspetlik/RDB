@@ -239,7 +239,7 @@ namespace RDB.UI.ImpExps
             }
             catch (Exception e)
             {
-                MessageBox.Show("Data se nepodařilo naimportovat...");
+                MessageBox.Show($"Data tabulky {TableName} se nepodařilo naimportovat...");
             }
         }
 
